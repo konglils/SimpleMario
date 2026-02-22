@@ -6,6 +6,7 @@
 #include <SFML/Network.hpp>
 #include <iostream>
 #include "Mario.h"
+#include "nlohmann/json.hpp"
 
 class SimpleNetwork {
 public:
@@ -55,6 +56,16 @@ public:
     }
 
     void handleEvent(const sf::Event& event) {
+        if (network_type != NetworkType::None && event.type == sf::Event::Closed) {
+            if (network_type == NetworkType::Server) {
+                for (const auto& client : clients) {
+                    client->disconnect();
+                }
+                clients.clear();
+            } else {
+                clientSocket.disconnect();
+            }
+        }
         if (network_type != NetworkType::Client) return;
         sf::Packet packet;
         if (event.type == sf::Event::KeyPressed) {
@@ -129,9 +140,27 @@ public:
         }
 
         // 处理客户端数据
-        for (const auto& client : clients) {
+        std::vector<unsigned int> removeIds;
+        for (auto it = clients.begin(); it != clients.end();) {
+            const auto& client = *it;
             sf::Packet packet;
-            while (client->receive(packet) == sf::Socket::Done) {
+            sf::Socket::Status status = client->receive(packet);
+            if (status == sf::Socket::Error || status == sf::Socket::Disconnected) {
+                const unsigned int id = players[client.get()]->getId();
+                removeIds.push_back(id);
+                players.erase(client.get());
+                // 删除玩家
+                for (auto obj_it = game_objects.begin(); obj_it != game_objects.end(); ++obj_it) {
+                    if ((*obj_it)->getId() == id) {
+                        game_objects.erase(obj_it);
+                        break;
+                    }
+                }
+                SceneContext::getInstance().getSceneManager()->getCurrentScene()->removeObjectById(id);
+                it = clients.erase(it);
+                continue;
+            }
+            while (status == sf::Socket::Done) {
                 const auto& marioController = players[client.get()]->getComponent<MarioController>();
                 int type;
                 packet >> type;
@@ -145,6 +174,17 @@ public:
                 } else if (type == 3 || type == 4) {
                     marioController->stopRun();
                 }
+
+                status = client->receive(packet);
+            }
+            ++it;
+        }
+        // 通知所有在线玩家删除不在线的玩家
+        for (const auto& client : clients) {
+            for (const unsigned int& id : removeIds) {
+                sf::Packet packet;
+                packet << 2 << id;
+                client->send(packet);
             }
         }
 
@@ -167,7 +207,12 @@ public:
 
     void clientUpdate(const sf::Time& deltaTime) {
         sf::Packet packet;
-        while (clientSocket.receive(packet) == sf::Socket::Done) {
+        sf::Socket::Status status = clientSocket.receive(packet);
+        if (status == sf::Socket::Error || status == sf::Socket::Disconnected) {
+            network_type = NetworkType::None;
+            return;
+        }
+        while (status == sf::Socket::Done) {
             int type;
             packet >> type;
             if (type == 0) {
@@ -235,7 +280,13 @@ public:
                     move_component->setPosition(x, y);
                     move_component->setSpeed(s_x, s_y);
                 }
+            } else if (type == 2) {
+                unsigned int id;
+                packet >> id;
+                SceneContext::getInstance().getSceneManager()->getCurrentScene()->removeObjectById(id);
             }
+
+            status = clientSocket.receive(packet);
         }
     }
 

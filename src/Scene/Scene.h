@@ -80,6 +80,16 @@ public:
         return game_objects_map[id];
     }
 
+    void removeObjectById(const unsigned int id) {
+        game_objects_map.erase(id);
+        for (auto it = game_objects.begin(); it != game_objects.end(); ++it) {
+            if ((*it)->getId() == id) {
+                game_objects.erase(it);
+                break;
+            }
+        }
+    }
+
     // 相机管理
     void setCamera(sf::RenderWindow* _window) {
         camera = std::make_unique<Camera>(_window);

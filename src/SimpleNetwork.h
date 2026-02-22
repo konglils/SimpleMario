@@ -140,14 +140,14 @@ public:
         }
 
         // 处理客户端数据
-        std::vector<unsigned int> removeIds;
+        std::unordered_map<unsigned int, bool> removeIdsMap;
         for (auto it = clients.begin(); it != clients.end();) {
             const auto& client = *it;
             sf::Packet packet;
             sf::Socket::Status status = client->receive(packet);
             if (status == sf::Socket::Error || status == sf::Socket::Disconnected) {
                 const unsigned int id = players[client.get()]->getId();
-                removeIds.push_back(id);
+                removeIdsMap[id] = true;
                 players.erase(client.get());
                 // 删除玩家
                 for (auto obj_it = game_objects.begin(); obj_it != game_objects.end(); ++obj_it) {
@@ -181,10 +181,20 @@ public:
         }
         // 通知所有在线玩家删除不在线的玩家
         for (const auto& client : clients) {
-            for (const unsigned int& id : removeIds) {
+            for (const auto& [id, remove] : removeIdsMap) {
                 sf::Packet packet;
                 packet << 2 << id;
                 client->send(packet);
+            }
+        }
+
+        // 删除不在线的玩家在碰撞系统中的引用
+        const auto collision_objects = SceneContext::getInstance().getSceneManager()->getCurrentScene()->getCollisionSystem()->getObjects();
+        for (auto it = collision_objects->begin(); it != collision_objects->end();) {
+            if (removeIdsMap.find((*it)->getId()) != removeIdsMap.end()) {
+                it = collision_objects->erase(it);
+            } else {
+                ++it;
             }
         }
 

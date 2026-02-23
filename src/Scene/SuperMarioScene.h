@@ -18,8 +18,10 @@ public:
     ~SuperMarioScene() override = default;
 
     void init() override {
-        collisionSystem = std::make_unique<CollisionSystem>();
         Scene::init();
+        if (is_init) return;
+        is_init = true;
+        collisionSystem = std::make_unique<CollisionSystem>();
         AssetManager::getInstance().loadTexture("./Asset/SuperMario/resources/graphics");
         FrameManager::getInstance().loadFrame();
 
@@ -34,7 +36,7 @@ public:
         std::shared_ptr<Ground> wall1 = std::make_shared<Ground>(0, 0, 10, 960, "wall1");
         this->addObject(wall1);
         // 地板
-        std::shared_ptr<Ground> ground = std::make_shared<Ground>(-10000, 857, 120000, 80);
+        std::shared_ptr<Ground> ground = std::make_shared<Ground>(-10000, 857, 120000, 800);
         this->addObject(ground);
 
         std::shared_ptr<Ground> pipe1 = std::make_shared<Ground>(1927, 720, 124, 137);
@@ -45,6 +47,8 @@ public:
     }
 
     void initDynamicObjects() {
+        if (is_initDynamicObjects) return;
+        is_initDynamicObjects = true;
         std::shared_ptr<Mario> mario = std::make_shared<Mario>(100.f, 100.f);
         this->addObjectWithNetwork(mario);
 
@@ -96,18 +100,13 @@ public:
     void handleEvent(sf::Event& event) override {
         simple_network.handleEvent(event);
         Scene::handleEvent(event);
-        if (event.type == sf::Event::Resized) {
-            for (const auto& obj : game_objects) {
-                if (obj->getTag().substr(0, 6) == "ground") {
-                    // obj->setSize(size.x, size.y);
-                    const std::shared_ptr<Ground> obj_ground = std::dynamic_pointer_cast<Ground>(obj);
-                    obj_ground->setPosition(0.f, window->getSize().y - 20.f);
-                    break;
-                }
+        if (event.type == sf::Event::MouseButtonPressed) {
+            const sf::Vector2i pos = SceneContext::getInstance().getMousePosition();
+            std::cout << "SuperMarioScene:" << pos.x << " " << pos.y << std::endl;
+        } else if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::Escape) {
+                SceneContext::getInstance().getSceneManager()->loadScene("MenuScene");
             }
-        } else if (event.type == sf::Event::MouseButtonPressed) {
-            const sf::Vector2f pos = SceneContext::getInstance().getCamera()->getCenter();
-            std::cout << "SuperMarioScene:" << pos.x - 600 + event.mouseButton.x << " " << pos.y - 480 + event.mouseButton.y << std::endl;
         }
     }
 
@@ -116,8 +115,9 @@ public:
     }
 
     void startServer() {
-        simple_network.startServer();
-        initDynamicObjects();
+        if (simple_network.startServer()) {
+            initDynamicObjects();
+        }
     }
 
     void connectToServer(const std::string& address) {
@@ -128,4 +128,5 @@ private:
     std::unique_ptr<CollisionSystem> collisionSystem;
     SimpleNetwork simple_network;
     sf::Sprite bg;
+    bool is_initDynamicObjects = false;
 };

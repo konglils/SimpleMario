@@ -22,6 +22,8 @@ public:
 
     void init() override {
         Scene::init();
+        if (is_init) return;
+        is_init = true;
         initScene();
     }
 
@@ -29,7 +31,7 @@ public:
         std::shared_ptr<Button> button1 = std::make_shared<Button>(100, 100, 250, 50, L"超级玛丽Client");
         button1->setOnClick([&]() -> void {
             SceneContext::getInstance().getSceneManager()->loadScene("SuperMarioScene");
-            std::dynamic_pointer_cast<SuperMarioScene>(SceneContext::getInstance().getSceneManager()->getCurrentScene())->connectToServer("127.0.0.1");
+            std::dynamic_pointer_cast<SuperMarioScene>(SceneContext::getInstance().getSceneManager()->getCurrentScene())->connectToServer("8.134.12.212");
         });
         std::shared_ptr<Button> button1_ = std::make_shared<Button>(100, 100, 250, 50, L"超级玛丽Server");
         button1_->setOnClick([&]() -> void {

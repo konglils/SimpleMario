@@ -18,9 +18,22 @@ public:
     void init() override {
         window->setSize(sf::Vector2u(1200, 1200));
         Scene::init();
+        if (is_init) return;
+        is_init = true;
         // this->addObject(std::make_shared<Penguin>());
         this->addObject(std::make_shared<Cube>());
         // this->addObject(std::make_shared<NewModel>());
         // this->addObject(std::make_shared<Human>());
+    }
+
+    void handleEvent(sf::Event& event) override {
+        Scene::handleEvent(event);
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+            SceneContext::getInstance().getSceneManager()->loadScene("MenuScene");
+        }
+    }
+
+    void exit() override {
+        window->setSize(sf::Vector2u(1200, 960));
     }
 };

@@ -57,7 +57,7 @@ public:
 
     const sf::Font& getFont() {
         if (!have_load_font) {
-            font.loadFromFile("../src/Asset/Font/Minecraft_AE.ttf");
+            font.loadFromFile("./Asset/Font/Minecraft_AE.ttf");
             have_load_font = true;
         }
         return font;

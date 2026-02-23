@@ -24,6 +24,10 @@ public:
         this->setSceneContext();
     }
 
+    virtual void exit() {
+
+    }
+
     // 场景更新方法
     virtual void update(sf::Time deltaTime) {
         for (const auto& obj : game_objects) {
@@ -131,4 +135,5 @@ protected:
     std::unique_ptr<Camera> camera;
     std::string scene_name;
     SceneManager* scene_manager{};
+    bool is_init = false;
 };

@@ -19,6 +19,11 @@ public:
     ~SimpleNetwork() = default;
 
     bool startServer() {
+        if (network_type == NetworkType::Server) return true;
+        if (network_type == NetworkType::Client) {
+            std::cout << "Cannot start server while already running as a client!" << std::endl;
+            return false;
+        }
         std::cout << "Starting server on port " << port << "..." << std::endl;
 
         if (listener.listen(port) != sf::Socket::Done) {
@@ -33,6 +38,11 @@ public:
     }
 
     bool connectToServer(const std::string& address) {
+        if (network_type == NetworkType::Client) return true;
+        if (network_type == NetworkType::Server) {
+            std::cout << "Cannot connect to server while already running as a server!" << std::endl;
+            return false;
+        }
         std::cout << "Connecting to " << address << ":" << port << "..." << std::endl;
 
         if (clientSocket.connect(address, port, sf::seconds(5)) != sf::Socket::Done) {

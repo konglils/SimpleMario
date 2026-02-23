@@ -1,10 +1,16 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.20)
 project(GameEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 
 # 设置 SFML 路径
 set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
+set(WIN_STATIC_LINK OFF)
+
+if(WIN_STATIC_LINK)
+    add_definitions(-DSFML_STATIC)
+    set(CMAKE_EXE_LINKER_FLAGS "-static")
+endif()
 
 # 包含头文件
 include_directories(${SFML_ROOT}/include)
@@ -23,24 +29,38 @@ file(GLOB_RECURSE SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
 )
 
+link_directories(${SFML_ROOT}/lib)
+add_executable(${PROJECT_NAME} ${SOURCES})
+
 if(WIN32)
     # Windows 下需区分 Debug/Release 后缀（如 sfml-graphics-d.lib）
-    link_directories(${SFML_ROOT}/lib)
-    add_executable(${PROJECT_NAME} ${SOURCES})
-    target_link_libraries(
-            ${PROJECT_NAME}
-            debug sfml-graphics-d
-            debug sfml-window-d
-            debug sfml-system-d
-            debug sfml-network-d
-            optimized sfml-graphics
-            optimized sfml-window
-            optimized sfml-system
-            optimized sfml-network
-    )
+    if(WIN_STATIC_LINK)
+        target_link_libraries(
+                ${PROJECT_NAME}
+                debug sfml-graphics-s-d
+                debug sfml-window-s-d
+                debug sfml-system-s-d
+                debug sfml-network-s-d
+                optimized sfml-graphics-s
+                optimized sfml-window-s
+                optimized sfml-system-s
+                optimized sfml-network-s
+                freetype opengl32 winmm gdi32 ws2_32
+        )
+    else()
+        target_link_libraries(
+                ${PROJECT_NAME}
+                debug sfml-graphics-d
+                debug sfml-window-d
+                debug sfml-system-d
+                debug sfml-network-d
+                optimized sfml-graphics
+                optimized sfml-window
+                optimized sfml-system
+                optimized sfml-network
+        )
+    endif()
 else()
     # Linux/macOS 通常无后缀
-    link_directories(${SFML_ROOT}/lib)
-    add_executable(${PROJECT_NAME} ${SOURCES})
     target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system sfml-network)
 endif()

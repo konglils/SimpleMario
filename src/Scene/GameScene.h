@@ -20,6 +20,8 @@ public:
 
     void init() override {
         Scene::init();
+        if (is_init) return;
+        is_init = true;
         collisionSystem = std::make_unique<CollisionSystem>();
         initScene();
     }
@@ -85,6 +87,10 @@ public:
         } else if (event.type == sf::Event::MouseButtonPressed) {
             const auto mouse_position = SceneContext::getInstance().getMousePosition();
             addObject(std::make_shared<Circle>(mouse_position.x - 20, mouse_position.y - 20, 20.f));
+        } else if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::Escape) {
+                SceneContext::getInstance().getSceneManager()->loadScene("MenuScene");
+            }
         }
     }
 

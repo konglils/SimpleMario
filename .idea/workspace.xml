@@ -7,6 +7,7 @@
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/LiveTemplatesHousekeeping/HotspotSessionHintIsShown/@EntryValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppGeneralOptions" type="string" />
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
   </component>
   <component name="CMakePresetLoader">{
@@ -30,10 +31,18 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02101d23-0458-45a5-bfa2-693931b2e700" name="Changes" comment="">
+    <list default="true" id="02101d23-0458-45a5-bfa2-693931b2e700" name="Changes" comment="chore(build): 添加Windows静态链接配置支持&#10;&#10;- 添加WIN_STATIC_LINK选项控制静态链接行为&#10;- 配置SFML静态库编译定义和链接标志&#10;- 区分动态链接和静态链接的库文件依赖&#10;- 更新Windows平台下的SFML库文件引用路径&#10;- 添加静态链接所需的系统库依赖(freetype opengl32等)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CollisionSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/CollisionSystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameObjects/Mario.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameObjects/Mario.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameObjects/Button.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameObjects/Button.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Manager/AssetManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Manager/AssetManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Manager/FrameManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Manager/FrameManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Manager/SceneManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Manager/SceneManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Scene/GameScene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene/GameScene.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Scene/GameScene3D.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene/GameScene3D.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Scene/MenuScene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene/MenuScene.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Scene/Scene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene/Scene.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Scene/SuperMarioScene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene/SuperMarioScene.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SimpleNetwork.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimpleNetwork.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -84,7 +93,7 @@
   "keyToString": {
     "CMake Application.GameEngine (1).executor": "Run",
     "CMake Application.GameEngine (2).executor": "Debug",
-    "CMake Application.GameEngine.executor": "Run",
+    "CMake Application.GameEngine.executor": "Debug",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -101,7 +110,7 @@
     "last_opened_file_path": "E:/Project/C++ Program/CLion/GameEngine/src/Components",
     "nodejs_package_manager_path": "npm",
     "org.rust.first.attach.projects": "true",
-    "settings.editor.selected.configurable": "CMakeSettings",
+    "settings.editor.selected.configurable": "CPPToolchains",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -116,7 +125,12 @@
       <recent name="E:\Project\C++ Program\CLion\GameEngine\src\Manager" />
     </key>
   </component>
-  <component name="RunManager" selected="CMake Application.GameEngine (1)">
+  <component name="RunManager" selected="CMake Application.GameEngine">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="GameEngine (1)" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameEngine" TARGET_NAME="GameEngine" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="GameEngine" RUN_TARGET_NAME="GameEngine">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -157,7 +171,12 @@
       <workItem from="1771677971451" duration="3009000" />
       <workItem from="1771720705732" duration="1673000" />
       <workItem from="1771746369444" duration="5162000" />
-      <workItem from="1771758618260" duration="3662000" />
+      <workItem from="1771758618260" duration="10690000" />
+      <workItem from="1771774036708" duration="679000" />
+      <workItem from="1771774905913" duration="594000" />
+      <workItem from="1771776361971" duration="1718000" />
+      <workItem from="1771812637262" duration="2090000" />
+      <workItem from="1771845117692" duration="7633000" />
     </task>
     <task id="LOCAL-00001" summary="将 SFML 直接放进项目中，添加动画帧信息使用json文件加载功能。">
       <option name="closed" value="true" />
@@ -223,7 +242,15 @@
       <option name="project" value="LOCAL" />
       <updated>1771751211226</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="fix(network): 解决玩家断开连接时碰撞未清理的bug&#10;&#10;- 修改 CollisionSystem::getObjects 返回非const指针以便修改对象列表&#10;- 将 SimpleNetwork 中的 removeIds 从 vector 改为 unordered_map 提高查找效率&#10;- 添加碰撞系统中对断开连接玩家对应游戏对象的清理逻辑">
+      <option name="closed" value="true" />
+      <created>1771762480692</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1771762480692</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -254,6 +281,11 @@
     <MESSAGE value="feat(network): 添加网络功能支持多人游戏&#10;&#10;- 集成 SFML Network 库到 CMake 构建系统&#10;- 创建 SimpleNetwork 类实现服务器和客户端网络通信&#10;- 修改 GameObject 的 id 类型为 unsigned int 以提高安全性&#10;- 重构 Mario 类构造函数参数并添加玩家标识控制组件初始化&#10;- 在 MenuScene 中添加客户端和服务器启动选项按钮&#10;- 实现 SuperMarioScene 的网络连接和服务器启动功能&#10;- 修复 MarioJumpState 中的方向判断逻辑&#10;- 更新 StateMachine 的 getCurrentStateName 方法返回值类型" />
     <MESSAGE value="feat(network): 完善联机功能，可以多人加入游戏，所有玩家的世界信息能保持一致&#10;&#10;- 为所有游戏对象添加 className 成员变量用于识别类型&#10;- 在 Scene 类中添加游戏对象映射方便查找&#10;- 完善 SuperMarioScene 的网络连接和服务器启动功能&#10;- 重构 MarioController 组件分离键盘事件处理逻辑&#10;- 添加网络事件处理和数据同步机制" />
     <MESSAGE value="feat(network): 实现玩家断开连接处理机制&#10;&#10;- 核心功能：完善玩家离开时的清理和通知流程&#10;- 自动检测客户端断开连接状态&#10;- 服务器端自动移除断开玩家的相关数据&#10;- 通知所有在线玩家有玩家离开&#10;- 清理断开客户端的socket连接和游戏对象" />
-    <option name="LAST_COMMIT_MESSAGE" value="" />
+    <MESSAGE value="fix(network): 解决玩家断开连接时碰撞未清理的bug&#10;&#10;- 修改 CollisionSystem::getObjects 返回非const指针以便修改对象列表&#10;- 将 SimpleNetwork 中的 removeIds 从 vector 改为 unordered_map 提高查找效率&#10;- 添加碰撞系统中对断开连接玩家对应游戏对象的清理逻辑" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(network): 解决玩家断开连接时碰撞未清理的bug&#10;&#10;- 修改 CollisionSystem::getObjects 返回非const指针以便修改对象列表&#10;- 将 SimpleNetwork 中的 removeIds 从 vector 改为 unordered_map 提高查找效率&#10;- 添加碰撞系统中对断开连接玩家对应游戏对象的清理逻辑" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

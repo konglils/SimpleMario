@@ -29,6 +29,7 @@ public:
             std::cerr << "Scene " << scene_name << " not found" << std::endl;
             return;
         }
+        if (currentScene) currentScene->exit();
         currentScene = scenes[scene_name];
         currentScene->init();
     }

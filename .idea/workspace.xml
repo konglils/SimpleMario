@@ -31,20 +31,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02101d23-0458-45a5-bfa2-693931b2e700" name="Changes" comment="chore(build): 添加Windows静态链接配置支持&#10;&#10;- 添加WIN_STATIC_LINK选项控制静态链接行为&#10;- 添加其他场景按ESC返回菜单功能">
+    <list default="true" id="02101d23-0458-45a5-bfa2-693931b2e700" name="Changes" comment="refactor(collision): 引入offset使碰撞方块的位置可以相对GameObject自由偏移&#10;&#10;- 使用getCollisionPosition方法替代直接访问position成员变量&#10;- 引入offset偏移量机制支持更精确的碰撞检测坐标计算&#10;- 添加CircleCollision类的getCollisionPosition虚函数实现&#10;- 修改碰撞检测逻辑使用含偏移量的真实碰撞位置&#10;- 更新MoveComponent组件的碰撞位置设置方法&#10;- 重命名Cube类为Cube3D并调整相关引用">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CollisionSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/CollisionSystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Components/CollisionHandles/CollisionHandle.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/CollisionHandles/CollisionHandle.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Components/Collisions/BoxCollision.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Collisions/BoxCollision.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Components/Collisions/CircleCollision.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Collisions/CircleCollision.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Components/Collisions/CircleCollision.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Collisions/CircleCollision.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Components/Collisions/Collision.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Collisions/Collision.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Components/MoveComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/MoveComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameObjects/Circle.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameObjects/Circle.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameObjects/Cube.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameObjects/Cube3D.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameObjects/Mario.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameObjects/Mario.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Scene/GameScene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene/GameScene.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Scene/GameScene3D.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene/GameScene3D.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/State/MarioIdleState.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/State/MarioIdleState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/State/MarioJumpState.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/State/MarioJumpState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/State/MarioRunState.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/State/MarioRunState.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -176,7 +167,7 @@
       <workItem from="1771895533866" duration="6000" />
       <workItem from="1771900881849" duration="726000" />
       <workItem from="1771929132540" duration="17054000" />
-      <workItem from="1771981052446" duration="4779000" />
+      <workItem from="1771981052446" duration="6787000" />
     </task>
     <task id="LOCAL-00001" summary="将 SFML 直接放进项目中，添加动画帧信息使用json文件加载功能。">
       <option name="closed" value="true" />
@@ -258,7 +249,15 @@
       <option name="project" value="LOCAL" />
       <updated>1771854279978</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="refactor(collision): 引入offset使碰撞方块的位置可以相对GameObject自由偏移&#10;&#10;- 使用getCollisionPosition方法替代直接访问position成员变量&#10;- 引入offset偏移量机制支持更精确的碰撞检测坐标计算&#10;- 添加CircleCollision类的getCollisionPosition虚函数实现&#10;- 修改碰撞检测逻辑使用含偏移量的真实碰撞位置&#10;- 更新MoveComponent组件的碰撞位置设置方法&#10;- 重命名Cube类为Cube3D并调整相关引用">
+      <option name="closed" value="true" />
+      <created>1771986289610</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1771986289610</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -291,7 +290,8 @@
     <MESSAGE value="feat(network): 实现玩家断开连接处理机制&#10;&#10;- 核心功能：完善玩家离开时的清理和通知流程&#10;- 自动检测客户端断开连接状态&#10;- 服务器端自动移除断开玩家的相关数据&#10;- 通知所有在线玩家有玩家离开&#10;- 清理断开客户端的socket连接和游戏对象" />
     <MESSAGE value="fix(network): 解决玩家断开连接时碰撞未清理的bug&#10;&#10;- 修改 CollisionSystem::getObjects 返回非const指针以便修改对象列表&#10;- 将 SimpleNetwork 中的 removeIds 从 vector 改为 unordered_map 提高查找效率&#10;- 添加碰撞系统中对断开连接玩家对应游戏对象的清理逻辑" />
     <MESSAGE value="chore(build): 添加Windows静态链接配置支持&#10;&#10;- 添加WIN_STATIC_LINK选项控制静态链接行为&#10;- 添加其他场景按ESC返回菜单功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="chore(build): 添加Windows静态链接配置支持&#10;&#10;- 添加WIN_STATIC_LINK选项控制静态链接行为&#10;- 添加其他场景按ESC返回菜单功能" />
+    <MESSAGE value="refactor(collision): 引入offset使碰撞方块的位置可以相对GameObject自由偏移&#10;&#10;- 使用getCollisionPosition方法替代直接访问position成员变量&#10;- 引入offset偏移量机制支持更精确的碰撞检测坐标计算&#10;- 添加CircleCollision类的getCollisionPosition虚函数实现&#10;- 修改碰撞检测逻辑使用含偏移量的真实碰撞位置&#10;- 更新MoveComponent组件的碰撞位置设置方法&#10;- 重命名Cube类为Cube3D并调整相关引用" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(collision): 引入offset使碰撞方块的位置可以相对GameObject自由偏移&#10;&#10;- 使用getCollisionPosition方法替代直接访问position成员变量&#10;- 引入offset偏移量机制支持更精确的碰撞检测坐标计算&#10;- 添加CircleCollision类的getCollisionPosition虚函数实现&#10;- 修改碰撞检测逻辑使用含偏移量的真实碰撞位置&#10;- 更新MoveComponent组件的碰撞位置设置方法&#10;- 重命名Cube类为Cube3D并调整相关引用" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

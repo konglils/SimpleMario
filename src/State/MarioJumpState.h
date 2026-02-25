@@ -27,12 +27,12 @@ public:
     ~MarioJumpState() override = default;
 
     void start() override {
-        auto box_collision = owner->getComponent<Collision, BoxCollision>();
-        float w = left_sprite.getGlobalBounds().width;
-        float h = left_sprite.getGlobalBounds().height;
-        box_collision->setSize(w, h);
-        owner->setSize(w, h);
-        owner->getComponent<GravityComponent>()->setActive(true);
+        // auto box_collision = owner->getComponent<Collision, BoxCollision>();
+        // float w = left_sprite.getGlobalBounds().width;
+        // float h = left_sprite.getGlobalBounds().height;
+        // box_collision->setSize(w, h);
+        // owner->setSize(w, h);
+        // owner->getComponent<GravityComponent>()->setActive(true);
     }
 
     void update(const sf::Time& deltaTime) override {
@@ -40,6 +40,12 @@ public:
             setIsLeft(true);
         } else if (owner->getSpeed().x > 0) {
             setIsLeft(false);
+        }
+        const auto box_collision = owner->getComponent<Collision, BoxCollision>();
+        if (!getIsLeft()) {
+            box_collision->setOffset(sf::Vector2f(16.f, 0.f));
+        } else {
+            box_collision->setOffset(sf::Vector2f(0.f, 0.f));
         }
     }
 

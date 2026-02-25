@@ -38,17 +38,24 @@ public:
             animation_right.update(deltaTime);
         }
 
-        sf::Sprite* sprite;
-        if (getIsLeft()) {
-            sprite = &animation_left.getSprite();
-        } else {
-            sprite = &animation_right.getSprite();
-        }
+        // sf::Sprite* sprite;
+        // if (getIsLeft()) {
+        //     sprite = &animation_left.getSprite();
+        // } else {
+        //     sprite = &animation_right.getSprite();
+        // }
+        // const auto box_collision = owner->getComponent<Collision, BoxCollision>();
+        // const float w = sprite->getGlobalBounds().width;
+        // const float h = sprite->getGlobalBounds().height;
+        // box_collision->setSize(w, h);
+        // owner->setSize(w, h);
+
         const auto box_collision = owner->getComponent<Collision, BoxCollision>();
-        const float w = sprite->getGlobalBounds().width;
-        const float h = sprite->getGlobalBounds().height;
-        box_collision->setSize(w, h);
-        owner->setSize(w, h);
+        if (!getIsLeft()) {
+            box_collision->setOffset(sf::Vector2f(12.f, 0.f));
+        } else {
+            box_collision->setOffset(sf::Vector2f(0.f, 0.f));
+        }
     }
     void handleEvent(const sf::Event& event) override {
         if (event.type == sf::Event::KeyPressed) {

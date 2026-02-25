@@ -30,6 +30,7 @@ public:
         const float h = left_sprite.getGlobalBounds().height;
         box_collision->setSize(w, h);
         owner->setSize(w, h);
+        box_collision->setOffset(sf::Vector2f(0.f, 0.f));
     }
 
     void update(const sf::Time& deltaTime) override {

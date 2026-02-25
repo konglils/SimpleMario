@@ -35,12 +35,12 @@ public:
                 if (auto b_c = b->getComponent<Collision>(); a_c->checkCollision(*b_c)) {
                     const sf::Vector2f a_speed = a->getSpeed();
                     const sf::Vector2f b_speed = b->getSpeed();
-                    const sf::Vector2f a_position = a->getPosition();
-                    const sf::Vector2f b_position = b->getPosition();
+                    const sf::Vector2f ac_position = a_c->getCollisionPosition();
+                    const sf::Vector2f bc_position = b_c->getCollisionPosition();
                     EventBus::getInstance().publish("onCollision" + a->getTag(),
-                        CollisionEvent{ a, b, a_speed, b_speed, a_position, b_position });
+                        CollisionEvent{ a, b, a_speed, b_speed, ac_position, bc_position });
                     EventBus::getInstance().publish("onCollision" + b->getTag(),
-                        CollisionEvent{ b, a, b_speed, a_speed, b_position, a_position });
+                        CollisionEvent{ b, a, b_speed, a_speed, bc_position, ac_position });
                 }
             }
         }

@@ -64,7 +64,7 @@ public:
     bool needGravity() {
         auto collision = this->getComponent<Collision>();
         sf::Vector2f dy = sf::Vector2f(0.f, 1.f);
-        collision->setPosition(collision->getPosition() + dy);
+        collision->setCollisionPosition(collision->getCollisionPosition() + dy);
 
         const auto game_objects = *SceneContext::getInstance().
         getSceneManager()->getCurrentScene()->getCollisionSystem()->getObjects();
@@ -74,11 +74,11 @@ public:
             auto other_collision = game_object->getComponent<Collision>();
             if (!other_collision) continue;
             if (other_collision->checkCollision(*collision)) {
-                collision->setPosition(collision->getPosition() - dy);
+                collision->setCollisionPosition(collision->getCollisionPosition() - dy);
                 return false;
             }
         }
-        collision->setPosition(collision->getPosition() - dy);
+        collision->setCollisionPosition(collision->getCollisionPosition() - dy);
         return true;
     }
 
@@ -108,9 +108,9 @@ public:
             float right_x = std::abs(event.a_position.x + this_->getSize().x - (event.b_position.x + other->getSize().x * 0.5f));
             float left_x = std::abs(event.a_position.x - (event.b_position.x + other->getSize().x * 0.5f));
             if (right_x < left_x) {
-                moveComponent->setPositionX(event.b_position.x - this_->getSize().x);
+                moveComponent->moveCollisionXTo(event.b_position.x - this_->getSize().x);
             } else {
-                moveComponent->setPositionX(event.b_position.x + other->getSize().x);
+                moveComponent->moveCollisionXTo(event.b_position.x + other->getSize().x);
             }
         } else {
             if (this_->getSpeed().y < 0 && dx - dy < 10.f) return;
@@ -122,12 +122,12 @@ public:
             float top_y = std::abs(event.a_position.y - (event.b_position.y + other->getSize().y * 0.5f));
             float bottom_y = std::abs(event.a_position.y + this_->getSize().y - (event.b_position.y + other->getSize().y * 0.5f));
             if (top_y > bottom_y) {
-                moveComponent->setPositionY(event.b_position.y - this_->getSize().y);
+                moveComponent->moveCollisionYTo(event.b_position.y - this_->getSize().y);
                 moveComponent->setSpeedY(0.f);
                 this->getComponent<StateMachine>()->setState("MarioIdleState");
                 this->getComponent<GravityComponent>()->setActive(false);
             } else {
-                moveComponent->setPositionY(event.b_position.y + other->getSize().y);
+                moveComponent->moveCollisionYTo(event.b_position.y + other->getSize().y);
             }
         }
     }

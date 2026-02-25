@@ -32,7 +32,7 @@ void BoxCollision::update(const sf::Time& deltaTime) {
 
 void BoxCollision::render(sf::RenderWindow *window) {
     sf::RectangleShape rect(this->size);
-    rect.setPosition(this->position);
+    rect.setPosition(this->getCollisionPosition());
     rect.setFillColor(sf::Color::Transparent);
     rect.setOutlineColor(sf::Color::Red);
     rect.setOutlineThickness(2);
@@ -44,17 +44,17 @@ bool BoxCollision::checkCollision(const Collision &other) const {
 }
 
 bool BoxCollision::checkCollisionWithBox(const BoxCollision &other) const {
-    const float maxX = std::max(position.x + size.x, other.getPosX() + other.getWidth());
-    const float minX = std::min(position.x, other.getPosX());
-    const float maxY = std::max(position.y + size.y, other.getPosY() + other.getHeight());
-    const float minY = std::min(position.y, other.getPosY());
+    const float maxX = std::max(getPosX() + size.x, other.getPosX() + other.getWidth());
+    const float minX = std::min(getPosX(), other.getPosX());
+    const float maxY = std::max(getPosY() + size.y, other.getPosY() + other.getHeight());
+    const float minY = std::min(getPosY(), other.getPosY());
     return ((maxX - minX < size.x + other.getWidth()) && (maxY - minY < size.y + other.getHeight()));
 }
 
 bool BoxCollision::checkCollisionWithCircle(const CircleCollision &other) const {
     // 找到矩形上离圆心最近的点
-    const float closestX = std::max(position.x, std::min(other.getPosX(), position.x + size.x));
-    const float closestY = std::max(position.y, std::min(other.getPosY(), position.y + size.y));
+    const float closestX = std::max(getPosX(), std::min(other.getPosX(), getPosX() + size.x));
+    const float closestY = std::max(getPosY(), std::min(other.getPosY(), getPosY() + size.y));
 
     // 计算圆心到最近点的距离
     const float distanceX = other.getPosX() - closestX;
@@ -73,11 +73,11 @@ float BoxCollision::getHeight() const {
 }
 
 float BoxCollision::getPosX() const {
-    return this->position.x;
+    return this->position.x + this->offset.x;
 }
 
 float BoxCollision::getPosY() const {
-    return this->position.y;
+    return this->position.y + this->offset.y;
 }
 
 void BoxCollision::setPosition(const float x, const float y) {

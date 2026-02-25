@@ -6,6 +6,7 @@
 
 #include "Component.h"
 #include "GameObject.h"
+#include "Collision.h"
 
 class MoveComponent : public Component {
 public:
@@ -15,25 +16,43 @@ public:
         setPosition(owner->position.x, owner->position.y);
     }
 
-    void setPosition(const sf::Vector2f& pos) const {
+    void setPosition(const sf::Vector2f& pos, const bool move_collision = true) const {
         owner->setPosition(pos.x, pos.y);
-        setCollisionPosition(pos);
+        if (move_collision) setCollisionPosition(pos);
     }
 
-    void setPosition(const float posX, const float posY) const {
-        setPosition(sf::Vector2f(posX, posY));
+    void moveCollisionTo(const sf::Vector2f& pos) const {
+        if (const auto& collision = owner->getComponent<Collision>()) {
+            const auto delta_pos = pos - collision->getCollisionPosition();
+            collision->setCollisionPosition(pos);
+            this->addPosition(delta_pos, false);
+        }
     }
 
-    void setPositionX(const float posX) const {
-        setPosition(sf::Vector2f(posX, owner->position.y));
+    void moveCollisionXTo(const float posX) const {
+        const auto& collision = owner->getComponent<Collision>();
+        moveCollisionTo(sf::Vector2f(posX, collision->getCollisionPosition().y));
     }
 
-    void setPositionY(const float posY) const {
-        setPosition(sf::Vector2f(owner->position.x, posY));
+    void moveCollisionYTo(const float posY) const {
+        const auto& collision = owner->getComponent<Collision>();
+        moveCollisionTo(sf::Vector2f(collision->getCollisionPosition().x, posY));
     }
 
-    void addPosition(const sf::Vector2f& pos) const {
-        setPosition(owner->position + pos);
+    void setPosition(const float posX, const float posY, const bool move_collision = true) const {
+        setPosition(sf::Vector2f(posX, posY), move_collision);
+    }
+
+    void setPositionX(const float posX, const bool move_collision = true) const {
+        setPosition(sf::Vector2f(posX, owner->position.y), move_collision);
+    }
+
+    void setPositionY(const float posY, const bool move_collision = true) const {
+        setPosition(sf::Vector2f(owner->position.x, posY), move_collision);
+    }
+
+    void addPosition(const sf::Vector2f& pos, const bool move_collision = true) const {
+        setPosition(owner->position + pos, move_collision);
     }
 
     void setSpeed(const sf::Vector2f& speed) const {

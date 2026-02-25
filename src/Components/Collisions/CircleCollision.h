@@ -19,10 +19,13 @@ public:
     [[nodiscard]] bool checkCollisionWithCircle(const CircleCollision& other) const override;
     [[nodiscard]] float getRadius() const;
     [[nodiscard]] sf::Vector2f getPos() const;
+    [[nodiscard]] sf::Vector2f getCollisionPosition() const override;
     [[nodiscard]] float getPosX() const;
     [[nodiscard]] float getPosY() const;
+    void setCollisionPosition(const sf::Vector2f& _position) override {
+        this->position = _position - offset + sf::Vector2f(radius, radius);
+    }
 private:
     float radius;
-    // float posX, posY;
 };
 

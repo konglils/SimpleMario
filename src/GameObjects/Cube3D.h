@@ -8,9 +8,9 @@
 #include "SceneContext.h"
 #include "ModelManager.h"
 
-class Cube : public GameObject {
+class Cube3D : public GameObject {
 public:
-    Cube() {
+    Cube3D() {
         Model* p = ModelManager::getInstance().getModel("cube");
         if (p == nullptr) {
             ModelManager::getInstance().loadModel("./Asset/cube.obj", "cube");

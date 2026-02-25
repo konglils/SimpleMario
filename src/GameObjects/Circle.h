@@ -64,12 +64,7 @@ public:
     bool needGravity() {
         auto collision = this->getComponent<Collision>();
         sf::Vector2f dy = sf::Vector2f(0.f, 1.f);
-        collision->setPosition(collision->getPosition() + dy);
-
-        auto test1 = *SceneContext::getInstance().getSceneManager();
-        auto test2 = test1.getCurrentScene();
-        auto test3 = test2->getCollisionSystem();
-        auto test4 = test3->getObjects();
+        collision->setCollisionPosition(collision->getCollisionPosition() + dy);
 
         const auto game_objects = *SceneContext::getInstance().
         getSceneManager()->getCurrentScene()->getCollisionSystem()->getObjects();
@@ -79,11 +74,11 @@ public:
             auto other_collision = game_object->getComponent<Collision>();
             if (!other_collision) continue;
             if (other_collision->checkCollision(*collision)) {
-                collision->setPosition(collision->getPosition() - dy);
+                collision->setCollisionPosition(collision->getCollisionPosition() - dy);
                 return false;
             }
         }
-        collision->setPosition(collision->getPosition() - dy);
+        collision->setCollisionPosition(collision->getCollisionPosition() - dy);
         return true;
     }
 

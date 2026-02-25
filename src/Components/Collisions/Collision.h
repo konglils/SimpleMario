@@ -16,6 +16,23 @@ public:
         this->position = _position;
     }
 
+    virtual void setCollisionPosition(const sf::Vector2f& _position) {
+        this->position = _position - offset;
+    }
+
+    virtual void setOffset(const sf::Vector2f& _offset) {
+        this->offset = _offset;
+    }
+
+    [[nodiscard]] sf::Vector2f getOffset() const {
+        return offset;
+    }
+
+    // 返回含有偏移量的坐标，真正用于碰撞检测的坐标
+    [[nodiscard]] virtual sf::Vector2f getCollisionPosition() const {
+        return position + offset;
+    }
+
     [[nodiscard]] virtual sf::Vector2f getPosition() const {
         return position;
     }
@@ -26,6 +43,7 @@ public:
 
 protected:
     sf::Vector2f position;
+    sf::Vector2f offset;
 };
 
 

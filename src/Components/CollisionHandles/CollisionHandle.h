@@ -51,9 +51,9 @@ public:
             float right_x = std::abs(event.a_position.x + this_->getSize().x - (event.b_position.x + other->getSize().x * 0.5f));
             float left_x = std::abs(event.a_position.x - (event.b_position.x + other->getSize().x * 0.5f));
             if (right_x < left_x) {
-                moveComponent->setPositionX(event.b_position.x - this_->getSize().x);
+                moveComponent->moveCollisionXTo(event.b_position.x - this_->getSize().x);
             } else {
-                moveComponent->setPositionX(event.b_position.x + other->getSize().x);
+                moveComponent->moveCollisionXTo(event.b_position.x + other->getSize().x);
             }
         } else {
             const float relativeSpeedY = event.b_speed.y - event.a_speed.y;
@@ -64,9 +64,12 @@ public:
             float top_y = std::abs(event.a_position.y - (event.b_position.y + other->getSize().y * 0.5f));
             float bottom_y = std::abs(event.a_position.y + this_->getSize().y - (event.b_position.y + other->getSize().y * 0.5f));
             if (top_y > bottom_y) {
-                moveComponent->setPositionY(event.b_position.y - this_->getSize().y);
+                moveComponent->moveCollisionYTo(event.b_position.y - this_->getSize().y);
+                if (std::abs(this_->getSpeed().y) <= 150.f) {
+                    moveComponent->setSpeedY(0.f);
+                }
             } else {
-                moveComponent->setPositionY(event.b_position.y + other->getSize().y);
+                moveComponent->moveCollisionYTo(event.b_position.y + other->getSize().y);
             }
         }
     }

@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Scene.h"
-#include "Cube.h"
+#include "Cube3D.h"
 #include "NewModel3D.h"
 #include "Penguin3D.h"
 #include "Human3D.h"
@@ -20,10 +20,10 @@ public:
         Scene::init();
         if (is_init) return;
         is_init = true;
-        // this->addObject(std::make_shared<Penguin>());
-        this->addObject(std::make_shared<Cube>());
-        // this->addObject(std::make_shared<NewModel>());
-        // this->addObject(std::make_shared<Human>());
+        // this->addObject(std::make_shared<Penguin3D>());
+        this->addObject(std::make_shared<Cube3D>());
+        // this->addObject(std::make_shared<NewModel3D>());
+        // this->addObject(std::make_shared<Human3D>());
     }
 
     void handleEvent(sf::Event& event) override {

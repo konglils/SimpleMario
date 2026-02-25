@@ -7,9 +7,7 @@
 #include "GameObject.h"
 #include <cmath>
 
-CircleCollision::CircleCollision(float x, float y, float radius) {
-    // this->posX = x;
-    // this->posY = y;
+CircleCollision::CircleCollision(const float x, const float y, const float radius) {
     this->position = sf::Vector2f(x, y);
     this->radius = radius;
 }
@@ -22,7 +20,8 @@ void CircleCollision::update(const sf::Time& deltaTime) {
 
 void CircleCollision::render(sf::RenderWindow *window) {
     sf::CircleShape shape(radius);
-    shape.setPosition(position - sf::Vector2f(radius, radius));
+    shape.setPosition(this->getPos() - sf::Vector2f(radius, radius));
+    // std::cout << shape.getPosition().x << " " << shape.getPosition().y << std::endl;
     shape.setFillColor(sf::Color::Transparent);
     shape.setOutlineColor(sf::Color::Red);
     shape.setOutlineThickness(2);
@@ -43,7 +42,7 @@ bool CircleCollision::checkCollisionWithBox(const BoxCollision &other) const {
 
 
 bool CircleCollision::checkCollisionWithCircle(const CircleCollision &other) const {
-    const float distance = sqrtf(powf(other.getPos().x - position.x, 2) + powf(other.getPos().y - position.y, 2));
+    const float distance = sqrtf(powf(other.getPos().x - getPosX(), 2) + powf(other.getPos().y - getPosY(), 2));
     return distance < radius + other.getRadius();
 }
 
@@ -51,15 +50,20 @@ float CircleCollision::getRadius() const {
     return radius;
 }
 
+// 返回碰撞圆的圆心坐标
 sf::Vector2f CircleCollision::getPos() const {
-    return this->position;
+    return this->position + this->offset;
 }
 
 float CircleCollision::getPosX() const {
-    return this->position.x;
+    return this->position.x + this->offset.x;
 }
 
 float CircleCollision::getPosY() const {
-    return this->position.y;
+    return this->position.y + this->offset.y;
+}
+
+sf::Vector2f CircleCollision::getCollisionPosition() const {
+    return this->position + this->offset - sf::Vector2f(radius, radius);
 }
 

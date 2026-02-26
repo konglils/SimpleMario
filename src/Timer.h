@@ -11,21 +11,22 @@ public:
     Timer() = default;
     ~Timer() = default;
 
-    void start(const int _aim_time, const bool _is_loop) {
+    void start(const int _aim_time, const bool _is_loop = false) {
         this->aim_time = _aim_time;
         this->started = true;
         this->is_loop = _is_loop;
+        this->reset();
     }
 
     void update(const sf::Time& deltaTime) {
         if (started) {
             past_time += deltaTime.asMilliseconds();
             if (past_time >= aim_time) {
-                callback();
+                if (callback) callback();
                 if (is_loop) {
-                    past_time = 0;
+                    reset();
                 } else {
-                    started = false;
+                    stop();
                 }
             }
         }
@@ -33,6 +34,14 @@ public:
 
     void setCallback(const std::function<void()>& _callback) {
         this->callback = _callback;
+    }
+
+    void reset() {
+        past_time = 0;
+    }
+
+    void stop() {
+        started = false;
     }
 
 private:

@@ -31,11 +31,18 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02101d23-0458-45a5-bfa2-693931b2e700" name="Changes" comment="refactor(collision): 引入offset使碰撞方块的位置可以相对GameObject自由偏移&#10;&#10;- 使用getCollisionPosition方法替代直接访问position成员变量&#10;- 引入offset偏移量机制支持更精确的碰撞检测坐标计算&#10;- 添加CircleCollision类的getCollisionPosition虚函数实现&#10;- 修改碰撞检测逻辑使用含偏移量的真实碰撞位置&#10;- 更新MoveComponent组件的碰撞位置设置方法&#10;- 重命名Cube类为Cube3D并调整相关引用">
+    <list default="true" id="02101d23-0458-45a5-bfa2-693931b2e700" name="Changes" comment="refactor(collision): 将Mario的碰撞箱改为恒定大小，只会因方向改变偏移，从而修复一个离谱的“拉箱子”bug&#10;&#10;- 在MarioIdleState中添加碰撞偏移量设置为(0,0)&#10;- 在MarioJumpState中根据方向设置不同的碰撞偏移量&#10;- 在MarioRunState中根据方向设置不同的碰撞偏移量">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/State/MarioIdleState.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/State/MarioIdleState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CollisionSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/CollisionSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameObjects/Mario.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameObjects/Mario.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Scene/GameScene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene/GameScene.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Scene/MenuScene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene/MenuScene.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Scene/SuperMarioScene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene/SuperMarioScene.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SimpleNetwork.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimpleNetwork.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/State/MarioJumpState.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/State/MarioJumpState.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/State/MarioRunState.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/State/MarioRunState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/State/StateMachine.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/State/StateMachine.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Timer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Timer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protocol.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +52,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Release" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -83,7 +90,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "CMake Application.GameEngine (1).executor": "Run",
+    "CMake Application.GameEngine (1).executor": "Debug",
     "CMake Application.GameEngine (2).executor": "Debug",
     "CMake Application.GameEngine.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
@@ -117,7 +124,7 @@
       <recent name="E:\Project\C++ Program\CLion\GameEngine\src\Manager" />
     </key>
   </component>
-  <component name="RunManager" selected="CMake Application.GameEngine">
+  <component name="RunManager" selected="CMake Application.GameEngine (1)">
     <configuration name="GameEngine (1)" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameEngine" TARGET_NAME="GameEngine" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="GameEngine" RUN_TARGET_NAME="GameEngine">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -167,7 +174,12 @@
       <workItem from="1771895533866" duration="6000" />
       <workItem from="1771900881849" duration="726000" />
       <workItem from="1771929132540" duration="17054000" />
-      <workItem from="1771981052446" duration="6787000" />
+      <workItem from="1771981052446" duration="8071000" />
+      <workItem from="1771989347582" duration="2749000" />
+      <workItem from="1772012410587" duration="148000" />
+      <workItem from="1772028988868" duration="29000" />
+      <workItem from="1772100818645" duration="695000" />
+      <workItem from="1772103265513" duration="14146000" />
     </task>
     <task id="LOCAL-00001" summary="将 SFML 直接放进项目中，添加动画帧信息使用json文件加载功能。">
       <option name="closed" value="true" />
@@ -257,7 +269,15 @@
       <option name="project" value="LOCAL" />
       <updated>1771986289610</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="refactor(collision): 将Mario的碰撞箱改为恒定大小，只会因方向改变偏移，从而修复一个离谱的“拉箱子”bug&#10;&#10;- 在MarioIdleState中添加碰撞偏移量设置为(0,0)&#10;- 在MarioJumpState中根据方向设置不同的碰撞偏移量&#10;- 在MarioRunState中根据方向设置不同的碰撞偏移量">
+      <option name="closed" value="true" />
+      <created>1771988017018</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1771988017018</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -291,7 +311,8 @@
     <MESSAGE value="fix(network): 解决玩家断开连接时碰撞未清理的bug&#10;&#10;- 修改 CollisionSystem::getObjects 返回非const指针以便修改对象列表&#10;- 将 SimpleNetwork 中的 removeIds 从 vector 改为 unordered_map 提高查找效率&#10;- 添加碰撞系统中对断开连接玩家对应游戏对象的清理逻辑" />
     <MESSAGE value="chore(build): 添加Windows静态链接配置支持&#10;&#10;- 添加WIN_STATIC_LINK选项控制静态链接行为&#10;- 添加其他场景按ESC返回菜单功能" />
     <MESSAGE value="refactor(collision): 引入offset使碰撞方块的位置可以相对GameObject自由偏移&#10;&#10;- 使用getCollisionPosition方法替代直接访问position成员变量&#10;- 引入offset偏移量机制支持更精确的碰撞检测坐标计算&#10;- 添加CircleCollision类的getCollisionPosition虚函数实现&#10;- 修改碰撞检测逻辑使用含偏移量的真实碰撞位置&#10;- 更新MoveComponent组件的碰撞位置设置方法&#10;- 重命名Cube类为Cube3D并调整相关引用" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor(collision): 引入offset使碰撞方块的位置可以相对GameObject自由偏移&#10;&#10;- 使用getCollisionPosition方法替代直接访问position成员变量&#10;- 引入offset偏移量机制支持更精确的碰撞检测坐标计算&#10;- 添加CircleCollision类的getCollisionPosition虚函数实现&#10;- 修改碰撞检测逻辑使用含偏移量的真实碰撞位置&#10;- 更新MoveComponent组件的碰撞位置设置方法&#10;- 重命名Cube类为Cube3D并调整相关引用" />
+    <MESSAGE value="refactor(collision): 将Mario的碰撞箱改为恒定大小，只会因方向改变偏移，从而修复一个离谱的“拉箱子”bug&#10;&#10;- 在MarioIdleState中添加碰撞偏移量设置为(0,0)&#10;- 在MarioJumpState中根据方向设置不同的碰撞偏移量&#10;- 在MarioRunState中根据方向设置不同的碰撞偏移量" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(collision): 将Mario的碰撞箱改为恒定大小，只会因方向改变偏移，从而修复一个离谱的“拉箱子”bug&#10;&#10;- 在MarioIdleState中添加碰撞偏移量设置为(0,0)&#10;- 在MarioJumpState中根据方向设置不同的碰撞偏移量&#10;- 在MarioRunState中根据方向设置不同的碰撞偏移量" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

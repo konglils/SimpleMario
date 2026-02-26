@@ -46,16 +46,16 @@ public:
         this->addObject(box);
 
         // 左墙
-        std::shared_ptr<Ground> wall1 = std::make_shared<Ground>(0, 0, 10, 960, "wall1");
+        std::shared_ptr<Ground> wall1 = std::make_shared<Ground>(0-200, 0, 10 + 200, 960, "wall1");
         this->addObject(wall1);
         // 右墙
-        std::shared_ptr<Ground> wall2 = std::make_shared<Ground>(1190, 0, 10, 960, "wall2");
+        std::shared_ptr<Ground> wall2 = std::make_shared<Ground>(1190, 0, 10 + 200, 960, "wall2");
         this->addObject(wall2);
         // 天花板
         std::shared_ptr<Ground> wall3 = std::make_shared<Ground>(0, 0, 1200, 10, "wall3");
         this->addObject(wall3);
         //
-        std::shared_ptr<Ground> ground = std::make_shared<Ground>(-10000, 940, 120000, 80);
+        std::shared_ptr<Ground> ground = std::make_shared<Ground>(-10000, 940, 120000, 800);
         this->addObject(ground);
     }
 

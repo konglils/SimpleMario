@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "StateMachine.h"
 #include "GravityComponent.h"
+#include "Timer.h"
 
 
 class MarioJumpState : public BaseState {
@@ -33,6 +34,11 @@ public:
         // box_collision->setSize(w, h);
         // owner->setSize(w, h);
         // owner->getComponent<GravityComponent>()->setActive(true);
+        jump_timer.setCallback([&]() -> void {
+            w_is_pressed = false;
+        });
+        w_is_pressed = true;
+        jump_timer.start(500);
     }
 
     void update(const sf::Time& deltaTime) override {
@@ -41,11 +47,16 @@ public:
         } else if (owner->getSpeed().x > 0) {
             setIsLeft(false);
         }
-        const auto box_collision = owner->getComponent<Collision, BoxCollision>();
+        const auto& box_collision = owner->getComponent<Collision, BoxCollision>();
         if (!getIsLeft()) {
             box_collision->setOffset(sf::Vector2f(16.f, 0.f));
         } else {
             box_collision->setOffset(sf::Vector2f(0.f, 0.f));
+        }
+        if (w_is_pressed) {
+            jump_timer.update(deltaTime);
+            const auto& move_component = owner->getComponent<MoveComponent>();
+            move_component->addSpeed(sf::Vector2f(0.f, -4.f));
         }
     }
 
@@ -55,6 +66,10 @@ public:
                 setIsLeft(true);
             } else if (event.key.code == sf::Keyboard::D) {
                 setIsLeft(false);
+            }
+        } else if (event.type == sf::Event::KeyReleased) {
+            if (event.key.code == sf::Keyboard::W) {
+                w_is_pressed = false;
             }
         }
     }
@@ -79,7 +94,13 @@ public:
         owner->getComponent<StateMachine>()->setIsLeft(value);
     }
 
+    void set_w_is_pressed(const bool flag) {
+        w_is_pressed = flag;
+    }
+
 private:
     sf::Sprite left_sprite;
     sf::Sprite right_sprite;
+    bool w_is_pressed = false;
+    Timer jump_timer;
 };

@@ -22,6 +22,7 @@ public:
             for (size_t j = i + 1; j < objects.size(); j++) {
                 const auto a = objects[i];
                 const auto b = objects[j];
+                if (!a->getMoveAble() && !b->getMoveAble()) continue;
 
                 const auto a_c = a->getComponent<Collision>();
                 if (!a_c) continue;

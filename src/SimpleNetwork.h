@@ -96,6 +96,11 @@ public:
             } else if (event.key.code == sf::Keyboard::D) {
                 packet << 4;
                 clientSocket.send(packet);
+            } else if (event.key.code == sf::Keyboard::W) {
+                if (players[&clientSocket]->getComponent<StateMachine>()->getCurrentStateName() == "MarioJumpState") {
+                    packet << 5;
+                    clientSocket.send(packet);
+                }
             }
         }
     }
@@ -150,7 +155,7 @@ public:
         }
 
         // 处理客户端数据
-        std::unordered_map<unsigned int, bool> removeIdsMap;
+        std::unordered_map<unsigned int, bool> removeIdsMap; // 存储需要删除的玩家id
         for (auto it = clients.begin(); it != clients.end();) {
             const auto& client = *it;
             sf::Packet packet;
@@ -170,6 +175,7 @@ public:
                 it = clients.erase(it);
                 continue;
             }
+            // 处理玩家的输入操作
             while (status == sf::Socket::Done) {
                 const auto& marioController = players[client.get()]->getComponent<MarioController>();
                 int type;
@@ -183,6 +189,13 @@ public:
                     marioController->runRight();
                 } else if (type == 3 || type == 4) {
                     marioController->stopRun();
+                } else if (type == 5) {
+                    // 处理长安跳跃键后松开的逻辑
+                    if (players[client.get()]->getComponent<StateMachine>()->getCurrentStateName() == "MarioJumpState") {
+                        const auto& jump_state = std::dynamic_pointer_cast<MarioJumpState>(
+                            players[client.get()]->getComponent<StateMachine>()->getCurrentState());
+                        jump_state->set_w_is_pressed(false);
+                    }
                 }
 
                 status = client->receive(packet);
@@ -209,6 +222,9 @@ public:
         }
 
         // 向客户端同步数据
+        past_time += deltaTime.asMilliseconds();
+        if (past_time < 50) return;
+        past_time = 0;
         for (const auto& client : clients) {
             for (const auto& obj : game_objects) {
                 sf::Packet packet;
@@ -245,6 +261,7 @@ public:
                     packet >> x >> y >> s_x >> s_y >> is_jump >> id;
                     std::shared_ptr<Mario> player = std::make_shared<Mario>(x, y);
                     player->setId(id);
+                    players[&clientSocket] = player;
                     const auto& move_component = player->getComponent<MoveComponent>();
                     move_component->setSpeed(s_x, s_y);
                     SceneContext::getInstance().getSceneManager()->getCurrentScene()->addObjectWithMap(player);
@@ -264,6 +281,7 @@ public:
                     packet >> x >> y >> s_x >> s_y >> radius >> id;
                     std::shared_ptr<Player> player = std::make_shared<Player>(x, y, radius);
                     player->setId(id);
+                    player->removeComponent<GravityComponent>();
                     const auto& move_component = player->getComponent<MoveComponent>();
                     move_component->setSpeed(s_x, s_y);
                     SceneContext::getInstance().getSceneManager()->getCurrentScene()->addObjectWithMap(player);
@@ -322,5 +340,5 @@ private:
     std::vector<std::shared_ptr<sf::TcpSocket>> clients;
     std::unordered_map<sf::TcpSocket*, std::shared_ptr<GameObject>> players;
     std::vector<std::shared_ptr<GameObject>> game_objects;
-    long long past_time = 0;
+    int past_time = 0;
 };

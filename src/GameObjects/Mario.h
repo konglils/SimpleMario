@@ -34,7 +34,7 @@ public:
         stateMachine->addState<MarioRunState>();
         stateMachine->addState<MarioIdleState>();
         stateMachine->addState<MarioJumpState>();
-        stateMachine->setState("MarioRunState");
+        stateMachine->setState("MarioIdleState");
 
         this->tag = "mario:" + std::to_string(this->id);
         className = "Mario";
@@ -57,6 +57,8 @@ public:
     void update(sf::Time deltaTime) override {
         if (needGravity()) {
             this->getComponent<GravityComponent>()->setActive(true);
+            if (this->getComponent<StateMachine>()->getCurrentStateName() != "MarioJumpState")
+                this->getComponent<StateMachine>()->setState("MarioJumpState");
         }
         GameObject::update(deltaTime);
     }

@@ -66,6 +66,10 @@ public:
         return "null";
     }
 
+    const std::shared_ptr<BaseState>& getCurrentState() const {
+        return currentState;
+    }
+
 private:
     std::shared_ptr<BaseState> currentState{};
     std::unordered_map<std::string, std::shared_ptr<BaseState>> states;

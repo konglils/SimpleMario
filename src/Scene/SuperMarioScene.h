@@ -35,15 +35,22 @@ public:
         // 左墙
         std::shared_ptr<Ground> wall1 = std::make_shared<Ground>(0, 0, 10, 960, "wall1");
         this->addObject(wall1);
-        // 地板
-        std::shared_ptr<Ground> ground = std::make_shared<Ground>(-10000, 857, 120000, 800);
-        this->addObject(ground);
 
-        std::shared_ptr<Ground> pipe1 = std::make_shared<Ground>(1927, 720, 124, 137);
-        this->addObject(pipe1);
+        std::vector<std::array<int, 4>> collisions = {
+            {1927, 722, 2053, 852}, {2612, 655, 2738, 853}, {3163, 586, 3287, 851}, {3914, 585, 4042, 848},
+            {9188, 789, 9256, 854}, {9256, 721, 9321, 853}, {9325, 651, 9389, 851}, {9395, 583, 9459, 851},
+            {9599, 584, 9664, 851}, {9668, 651, 9734, 852}, {9738, 721, 9803, 853}, {9805, 790, 9873, 852},
+            {10149, 789, 10212, 852}, {10217, 720, 10282, 853}, {10284, 651, 10352, 852}, {10355, 584, 10490, 852},
+            {10629, 585, 10694, 851}, {10698, 652, 10761, 852}, {10764, 720, 10832, 850}, {10834, 789, 10901, 853},
+            {11183, 723, 11310, 852}, {12280, 720, 12406, 853},
+            {12412, 789, 12478, 852}, {12481, 720, 12544, 851}, {12547, 651, 12615, 852}, {12617, 583, 12682, 850},
+            {12687, 513, 12752, 852}, {12755, 448, 12819, 850}, {12824, 378, 12889, 851}, {12892, 310, 13025, 853},
+            {0, 857, 4728, 2000}, {4870, 858, 5893, 2000}, {6104, 859, 10489, 2000}, {10628, 857, 14535, 2000}
+        };
 
-        std::shared_ptr<Ground> box2 = std::make_shared<Ground>(333, 652, 100, 100);
-        this->addObject(box2);
+        for (const auto [x1, y1, x2, y2] : collisions) {
+            this->addObject(std::make_shared<Ground>(x1, y1, x2 - x1, y2 - y1));
+        }
     }
 
     void initDynamicObjects() {
@@ -51,18 +58,6 @@ public:
         is_initDynamicObjects = true;
         std::shared_ptr<Mario> mario = std::make_shared<Mario>(100.f, 100.f);
         this->addObjectWithNetwork(mario);
-
-        std::shared_ptr<Player> player2 = std::make_shared<Player>(60, 300, 40);
-        player2->removeComponent<GravityComponent>();
-        // player2->addComponent<CameraComponent>();
-        this->addObjectWithNetwork(player2);
-
-
-        std::shared_ptr<BoxGameObject> box = std::make_shared<BoxGameObject>(800, 800, 300, 80);
-        const auto move = box->addComponent<MoveComponent>();
-        move->setSpeedX(-200);
-        // box->addComponent<GravityComponent>();
-        this->addObjectWithNetwork(box);
     }
 
     void render(sf::RenderWindow* _window) override {
@@ -102,7 +97,7 @@ public:
         Scene::handleEvent(event);
         if (event.type == sf::Event::MouseButtonPressed) {
             const sf::Vector2i pos = SceneContext::getInstance().getMousePosition();
-            std::cout << "SuperMarioScene:" << pos.x << " " << pos.y << std::endl;
+            std::cout << "SuperMarioScene:" << pos.x << ", " << pos.y << std::endl;
         } else if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Escape) {
                 SceneContext::getInstance().getSceneManager()->loadScene("MenuScene");

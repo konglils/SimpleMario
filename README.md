@@ -2,7 +2,8 @@
 
 ## 项目简介
 
-这是一个基于 C++ 和 SFML 开发的简易 2D 游戏引擎，采用类似于 Unity 的组件化架构设计。
+这是一个基于 C++ 和 SFML 开发的一个个人学习用的游戏框架原型，采用类似于 Unity 的组件化架构设计,
+实现了引擎中最基础的几个管理模块。它离“真正的游戏引擎”还很远，但适合用来理解游戏对象是如何被组织和管理的。
 
 ## 功能特性
 
@@ -12,40 +13,6 @@
 - 基础物理系统（重力、移动控制）
 - 相机跟随功能
 - 可扩展的场景管理功能
-
-## 项目结构
-
-```
-GameEngine/
-├── src/
-│   ├── Components/           # 组件系统
-│   │   ├── Collisions/       # 碰撞组件
-│   │   ├── CollisionHandles/ # 碰撞处理
-│   │   ├── CameraComponent.h # 摄像机组件
-│   │   ├── Component.h       # 组件基类
-│   │   ├── Controller.h      # 控制器组件
-│   │   ├── GravityComponent.h # 重力组件
-│   │   └── MoveComponent.h   # 移动组件
-│   ├── GameObjects/          # 游戏对象
-│   │   ├── BoxGameObject.h   # 矩形游戏对象
-│   │   ├── Cube.h           # 3D立方体
-│   │   ├── GameObject.h     # 游戏对象基类
-│   │   ├── Ground.h         # 地面对象
-│   │   └── Player.h         # 玩家对象
-│   ├── Scene/               # 场景系统
-│   │   ├── GameScene.h      # 2D游戏场景
-│   │   ├── GameScene3D.h    # 3D游戏场景
-│   │   ├── Scene.h          # 场景基类
-│   │   └── SceneContext.h   # 场景上下文
-│   ├── Camera.h             # 摄像机类
-│   ├── CollisionSystem.h    # 碰撞系统
-│   ├── EventBus.h           # 事件总线
-│   ├── Events.h             # 事件定义
-│   ├── GameEngine.h         # 游戏引擎主类
-│   └── main.cpp             # 主程序入口
-├── CMakeLists.txt           # CMake构建文件
-└── README.md               # 项目说明文件
-```
 
 ## 技术栈
 
@@ -66,12 +33,12 @@ GameEngine/
 
 1. 克隆项目:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/minecraftbucuo/GameEngine.git
    cd GameEngine
    ```
 
 2. 配置SFML路径:
-   修改[CMakeLists.txt](file:///E:/Project/C++%20Program/CLion/GameEngine/CMakeLists.txt)中的SFML_ROOT路径为你的SFML安装路径
+   修改[CMakeLists.txt]()中的SFML_ROOT路径为你的SFML安装路径
 
 3. 编译项目:
    ```bash
@@ -83,22 +50,28 @@ GameEngine/
 
 ## 运行示例
 
-项目包含一个基本示例，展示了以下内容：
+项目包含基本示例，展示了以下内容：
 
-- 玩家控制的角色（圆形）
-- 可移动的平台（矩形）
-- 四周墙壁和地面
-- 碰撞检测与响应
-- 相机跟随效果
-
-运行程序后，使用 WASD 键控制玩家角色移动。
+- SuperMario client
+- SuperMario server
+- 3D图形渲染
+- 初开发时的测试 Demo
 
 ## 使用说明
 
-1. 创建自定义游戏对象继承自 [GameObject]()
-2. 添加所需组件使用 `addComponent<T>()` 方法
-3. 在 [Scene]() 中注册游戏对象
-4. 实现相应的碰撞处理器处理交互逻辑
+**1. 建场景**
+新建场景类继承 `Scene`，在 `init()` 里放初始化代码。
+
+**2. 放对象**
+在场景里用 `addObject()` 添加对象（游戏对象需继承 `GameObject`），游戏对象调用 `addComponent()` 挂载组件（组件需继承 `Component`）。
+
+**3. 挂场景**
+在 `GameEngine.cpp` 里把做好的场景注册到引擎。
+
+**4. 运行**
+编译执行，看到场景启动。
+
+更多细节请参阅源代码。
 
 ## 核心组件说明
 
@@ -108,7 +81,6 @@ GameEngine/
 
 - [GameObject](): 游戏对象基类
 - [Component](): 组件基类
-- [Player](): 玩家对象
 - [BoxGameObject](): 矩形游戏对象
 
 ### 物理系统
@@ -128,14 +100,6 @@ GameEngine/
 - **单例模式**: [SceneContext](): 场景上下文和[EventBus](): 事件总线使用单例模式
 - **组件模式**: 游戏对象通过组合不同组件实现功能
 - **观察者模式**: 事件系统实现观察者模式
-
-
-## 未来计划
-
-- 添加更多类型的碰撞体
-- 增强物理系统功能
-- 支持精灵渲染和动画系统
-- 添加音频支持
 
 ---
 

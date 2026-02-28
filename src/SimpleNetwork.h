@@ -322,6 +322,14 @@ public:
                 unsigned int id;
                 packet >> id;
                 SceneContext::getInstance().getSceneManager()->getCurrentScene()->removeObjectById(id);
+                // 删除不在线的玩家在碰撞系统中的引用
+                const auto collision_objects = SceneContext::getInstance().getSceneManager()->getCurrentScene()->getCollisionSystem()->getObjects();
+                for (auto it = collision_objects->begin(); it != collision_objects->end(); ++it) {
+                    if ((*it)->getId() == id) {
+                        collision_objects->erase(it);
+                        break;
+                    }
+                }
             }
 
             status = clientSocket.receive(packet);

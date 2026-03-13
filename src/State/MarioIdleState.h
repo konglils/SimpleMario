@@ -21,6 +21,7 @@ public:
         left_sprite.setTextureRect(sf::IntRect(178, 32, 12, 16));
         left_sprite.setScale(-4.f, 4.f);
         left_sprite.setOrigin(static_cast<float>(right_sprite.getTextureRect().width), 0.f);
+        jump_sound.setBuffer(AssetManager::getInstance().getSoundBuffer("small_jump"));
     }
     ~MarioIdleState() override = default;
 
@@ -46,6 +47,7 @@ public:
             } else if (event.key.code == sf::Keyboard::D) {
                 setIsLeft(false);
             } else if (event.key.code == sf::Keyboard::W) {
+                jump_sound.play();
                 owner->getComponent<StateMachine>()->setState("MarioJumpState");
             }
         }
@@ -74,4 +76,5 @@ public:
 private:
     sf::Sprite left_sprite;
     sf::Sprite right_sprite;
+    sf::Sound jump_sound;
 };

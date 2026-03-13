@@ -7,6 +7,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 class AssetManager {
 public:
@@ -63,9 +64,50 @@ public:
         return font;
     }
 
+    void loadSoundBuffer(const char* path) {
+        if (!std::filesystem::exists(path)) {
+            std::cerr << "Error: Path does not exist!" << std::endl;
+            return;
+        }
+        if (!std::filesystem::is_directory(path)) {
+            std::cerr << "Error: The provided path is not a directory!" << std::endl;
+            return;
+        }
+
+        try {
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
+                std::string extension = entry.path().extension().string();
+                std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+                if (extension != ".ogg") continue;
+                // std::cout << "loading: " << entry.path().string() << "..." << std::endl;
+                const std::string file_name = entry.path().filename().string().substr(0, entry.path().filename().string().size() - 4);
+                if (sf::SoundBuffer& sound_buffer = soundBuffers[file_name]; sound_buffer.loadFromFile(entry.path().string())) {
+                    // std::cout << file_name + " loaded successfully! size: " << texture.getSize().x << " x " << texture.getSize().y << std::endl;
+                } else {
+                    std::cerr << "Error: unable to load " << entry.path().string() << "!" << std::endl;
+                }
+            }
+        } catch (const std::filesystem::filesystem_error& ex) {
+            std::cerr << "Error: " << ex.what() << std::endl;
+        }
+    }
+
+    void addSoundBuffer(const std::string& name, const sf::SoundBuffer& sound_buffer) {
+        soundBuffers[name] = sound_buffer;
+    }
+
+    sf::SoundBuffer& getSoundBuffer(const std::string& name) {
+        if (soundBuffers.find(name) == soundBuffers.end()) {
+            std::cerr << "Error: soundBuffer " << name << " does not exist!" << std::endl;
+            return soundBuffers["default"];
+        }
+        return soundBuffers[name];
+    }
+
 private:
     AssetManager() = default;
     std::unordered_map<std::string, sf::Texture> textures{};
+    std::unordered_map<std::string, sf::SoundBuffer> soundBuffers{};
     sf::Font font{};
     bool have_load_font = false;
 };

@@ -15,6 +15,7 @@ public:
     explicit MarioRunState() : BaseState("MarioRunState") {
         animation_right.setFrames(FrameManager::getInstance().getFrame("right_small_normal"));
         animation_left.setFrames(FrameManager::getInstance().getFrame("left_small_normal"));
+        jump_sound.setBuffer(AssetManager::getInstance().getSoundBuffer("small_jump"));
     }
     ~MarioRunState() override = default;
 
@@ -64,6 +65,7 @@ public:
             } else if (event.key.code == sf::Keyboard::D) {
                 setIsLeft(false);
             } else if (event.key.code == sf::Keyboard::W) {
+                jump_sound.play();
                 owner->getComponent<StateMachine>()->setState("MarioJumpState");
             }
         }
@@ -92,4 +94,5 @@ public:
 private:
     Animation animation_right;
     Animation animation_left;
+    sf::Sound jump_sound;
 };

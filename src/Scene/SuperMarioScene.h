@@ -23,6 +23,7 @@ public:
         is_init = true;
         collisionSystem = std::make_unique<CollisionSystem>();
         AssetManager::getInstance().loadTexture("./Asset/SuperMario/resources/graphics");
+        AssetManager::getInstance().loadSoundBuffer("./Asset/SuperMario/resources/sound");
         FrameManager::getInstance().loadFrame();
 
         bg.setTexture(AssetManager::getInstance().getTexture("level_1"));

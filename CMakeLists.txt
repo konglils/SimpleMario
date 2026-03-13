@@ -41,10 +41,12 @@ if(WIN32)
                 debug sfml-window-s-d
                 debug sfml-system-s-d
                 debug sfml-network-s-d
+                debug sfml-audio-s-d
                 optimized sfml-graphics-s
                 optimized sfml-window-s
                 optimized sfml-system-s
                 optimized sfml-network-s
+                optimized sfml-audio-s
                 freetype opengl32 winmm gdi32 ws2_32
         )
     else()
@@ -54,10 +56,12 @@ if(WIN32)
                 debug sfml-window-d
                 debug sfml-system-d
                 debug sfml-network-d
+                debug sfml-audio-d
                 optimized sfml-graphics
                 optimized sfml-window
                 optimized sfml-system
                 optimized sfml-network
+                optimized sfml-audio
         )
     endif()
 else()

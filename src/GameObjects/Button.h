@@ -60,7 +60,7 @@ public:
         text.setPosition(x + (w - text.getGlobalBounds().width) * 0.5f, y + (h - text.getGlobalBounds().height) * 0.5f);
     }
 
-    void RunOnClick() const {
+    void runOnClick() const {
         if (onClick) onClick();
     }
 

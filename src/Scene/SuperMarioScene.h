@@ -4,6 +4,7 @@
 
 #pragma once
 #include "BoxGameObject.h"
+#include "Brick.h"
 #include "Button.h"
 #include "Ground.h"
 #include "Scene.h"
@@ -37,6 +38,15 @@ public:
         std::shared_ptr<Ground> wall1 = std::make_shared<Ground>(0, 0, 10, 960, "wall1");
         this->addObject(wall1);
 
+        std::vector<std::pair<int, int>> bricks = {
+            {1154, 609}, {1429, 609}, {1489, 609}, {1549, 609}, {1609, 609},
+            {13186, 571}
+        };
+
+        for (const auto& [x, y] : bricks) {
+            this->addObject(std::make_shared<Brick>(x, y));
+        }
+
         std::vector<std::array<int, 4>> collisions = {
             {1927, 722, 2053, 852}, {2612, 655, 2738, 853}, {3163, 586, 3287, 851}, {3914, 585, 4042, 848},
             {9188, 789, 9256, 854}, {9256, 721, 9321, 853}, {9325, 651, 9389, 851}, {9395, 583, 9459, 851},
@@ -57,7 +67,7 @@ public:
     void initDynamicObjects() {
         if (is_initDynamicObjects) return;
         is_initDynamicObjects = true;
-        std::shared_ptr<Mario> mario = std::make_shared<Mario>(100.f, 100.f);
+        std::shared_ptr<Mario> mario = std::make_shared<Mario>(100.f, -500.f);
         this->addObjectWithNetwork(mario);
     }
 

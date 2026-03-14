@@ -17,7 +17,7 @@ public:
     GameObject() : position(0, 0), size(0, 0), speed(0, 0), active(true), started(false) {
         this->id = idCounter++;
     }
-    GameObject(float posX, float posY, float width, float height) {
+    GameObject(const float posX, const float posY, const float width, const float height) {
         this->position = sf::Vector2f(posX, posY);
         this->size = sf::Vector2f(width, height);
         this->speed = sf::Vector2f(0, 0);
@@ -125,6 +125,10 @@ public:
 
     const sf::Vector2f& getPosition() const {
         return position;
+    }
+
+    sf::Vector2f getCenter() const {
+        return position + size / 2.f;
     }
 
     const sf::Vector2f& getSize() const {

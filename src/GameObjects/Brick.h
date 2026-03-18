@@ -15,7 +15,7 @@ public:
         this->moveAble = false;
 
         sprite.setTexture(AssetManager::getInstance().getTexture("tile_set"));
-        sprite.setTextureRect(sf::IntRect(16, 0, 15, 15));
+        sprite.setTextureRect(sf::IntRect(16, 0, 16, 16));
         sprite.setScale(4.f, 4.f);
         sprite.setPosition(this->getPosition());
 

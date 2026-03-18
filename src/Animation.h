@@ -23,6 +23,10 @@ public:
         frames->push_back(frame);
     }
 
+    void setBack(const bool flag) {
+        this->back = flag;
+    }
+
     void setFrames(std::vector<Frame>* _frames) {
         this->frames = _frames;
     }
@@ -31,8 +35,20 @@ public:
         currentFrameDuration += deltaTime.asMilliseconds();
         if (currentFrameDuration >= (*frames)[currentFrame].duration) {
             currentFrameDuration = 0;
-            currentFrame = (currentFrame + 1) % frames->size();
+            if (back) {
+                if (currentFrame == 0) add = 1;
+                else if (currentFrame == frames->size() - 1) add = -1;
+                currentFrame = currentFrame + add;
+            } else {
+                currentFrame = (currentFrame + 1) % frames->size();
+            }
         }
+    }
+
+    void render(sf::RenderWindow* window, const sf::Vector2f& position) {
+        sf::Sprite& sprite_ = this->getSprite();
+        sprite_.setPosition(position);
+        window->draw(sprite_);
     }
 
     Frame& getFrame() const {
@@ -56,4 +72,6 @@ private:
     unsigned int currentFrameDuration = 0;
     std::vector<Frame>* frames{};
     sf::Sprite sprite;
+    bool back = false;
+    int add = 1;
 };

@@ -21,9 +21,9 @@ public:
         if (is_init) return;
         is_init = true;
         // this->addObject(std::make_shared<Penguin3D>());
-        this->addObject(std::make_shared<Cube3D>());
+        // this->addObject(std::make_shared<Cube3D>());
         // this->addObject(std::make_shared<NewModel3D>());
-        // this->addObject(std::make_shared<Human3D>());
+        this->addObject(std::make_shared<Human3D>());
     }
 
     void handleEvent(sf::Event& event) override {

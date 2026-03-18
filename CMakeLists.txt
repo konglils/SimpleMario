@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # 设置 SFML 路径
 set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
-set(WIN_STATIC_LINK OFF)
+set(WIN_STATIC_LINK ON)
 
 if(WIN_STATIC_LINK)
     add_definitions(-DSFML_STATIC)
@@ -35,19 +35,57 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 if(WIN32)
     # Windows 下需区分 Debug/Release 后缀（如 sfml-graphics-d.lib）
     if(WIN_STATIC_LINK)
+        # Windows 下静态链接
+        # 首先尝试查找 openal32
+        if(EXISTS "${SFML_ROOT}/lib/libopenal32.a")
+            set(OPENAL_LIB "openal32")
+        elseif(EXISTS "${SFML_ROOT}/lib/libopenal.a")
+            set(OPENAL_LIB "openal")
+        else()
+            # 如果没有找到，可能需要从系统路径查找
+            set(OPENAL_LIB "openal32")
+        endif()
+
         target_link_libraries(
                 ${PROJECT_NAME}
+                debug sfml-audio-s-d
                 debug sfml-graphics-s-d
                 debug sfml-window-s-d
                 debug sfml-system-s-d
                 debug sfml-network-s-d
-                debug sfml-audio-s-d
+
+                optimized sfml-audio-s
                 optimized sfml-graphics-s
                 optimized sfml-window-s
                 optimized sfml-system-s
                 optimized sfml-network-s
-                optimized sfml-audio-s
-                freetype opengl32 winmm gdi32 ws2_32
+
+                # OpenAL 音频库
+                ${OPENAL_LIB}
+
+                # 音频编解码器库
+                flac
+                vorbisenc
+                vorbisfile
+                vorbis
+                ogg
+
+                # 其他依赖库
+                freetype
+                opengl32
+                winmm
+                gdi32
+                ws2_32
+
+                # 额外系统库
+                kernel32
+                user32
+                shell32
+                ole32
+                oleaut32
+                uuid
+                comdlg32
+                advapi32
         )
     else()
         target_link_libraries(

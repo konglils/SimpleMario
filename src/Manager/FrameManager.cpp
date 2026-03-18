@@ -5,9 +5,8 @@
 #include "FrameManager.h"
 #include <nlohmann/json.hpp>
 
-void FrameManager::loadMarioFrame() {
-    // std::ifstream file("E:/Project/C++ Program/CLion/GameEngine/src/Asset/SuperMario/source/data/player/mario.json");
-    std::ifstream file("./Asset/SuperMario/source/data/player/mario.json");
+void FrameManager::loadFrameFromJson(const char* path) {
+    std::ifstream file(path);
 
     json data = json::parse(file);
     for (const auto& frames_data : data["frames"]) {

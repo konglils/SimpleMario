@@ -33,11 +33,7 @@ public:
             setIsLeft(true);
         }
 
-        if (getIsLeft()) {
-            animation_left.update(deltaTime);
-        } else {
-            animation_right.update(deltaTime);
-        }
+        this->getAnimation().update(deltaTime);
 
         // sf::Sprite* sprite;
         // if (getIsLeft()) {
@@ -71,16 +67,8 @@ public:
         }
     }
     void render(sf::RenderWindow* window) override {
-        sf::Sprite* sprite;
-        if (getIsLeft()) {
-            sprite = &animation_left.getSprite();
-        } else {
-            sprite = &animation_right.getSprite();
-        }
-        if (owner) sprite->setPosition(owner->getPosition());
+        if (owner) this->getAnimation().render(window, owner->getPosition());
         else std::cout << "MarioRunState: owner is nullptr" << std::endl;
-
-        window->draw(*sprite);
     }
 
     bool getIsLeft() const {
@@ -89,6 +77,11 @@ public:
 
     void setIsLeft(const bool value) const {
         owner->getComponent<StateMachine>()->setIsLeft(value);
+    }
+
+    Animation& getAnimation() {
+        if (getIsLeft()) return animation_left;
+        return animation_right;
     }
 
 private:

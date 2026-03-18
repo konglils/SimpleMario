@@ -29,10 +29,11 @@ public:
     }
 
     void loadFrame() {
-        loadMarioFrame();
+        loadFrameFromJson("./Asset/SuperMario/source/data/player/mario.json");
+        loadFrameFromJson("./Asset/SuperMario/source/data/player/box.json");
     }
 
-    void loadMarioFrame();
+    void loadFrameFromJson(const char* path);
 
 private:
     FrameManager() = default;

@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "Box.h"
 #include "BoxGameObject.h"
 #include "Brick.h"
 #include "Button.h"
@@ -39,9 +40,11 @@ public:
         this->addObject(wall1);
 
         std::vector<std::pair<int, int>> bricks = {
-            {1154, 609}, {1429, 609}, {1489, 609}, {1549, 609}, {1609, 609},
+            {1154, 609}, {1429, 609}, {1557, 609}, {1621, 609},
             {13186, 571}
         };
+
+        this->addObject(std::make_shared<Box>(1493, 609));
 
         for (const auto& [x, y] : bricks) {
             this->addObject(std::make_shared<Brick>(x, y));

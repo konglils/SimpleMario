@@ -14,6 +14,7 @@
 #include "SceneContext.h"
 #include "SceneManager.h"
 #include "MarioCameraComponent.h"
+#include "Collision.h"
 
 
 class Mario : public GameObject {
@@ -27,7 +28,6 @@ public:
         this->addComponent<Collision, BoxCollision, true>();
         // this->addComponent<CollisionHandle, BoxCollisionHandle>();
         this->addComponent<GravityComponent>();
-        this->addComponent<MoveComponent>();
         if (isPlayer) this->addComponent<MarioCameraComponent>();
 
         const auto stateMachine = this->addComponent<StateMachine>();
@@ -35,6 +35,8 @@ public:
         stateMachine->addState<MarioIdleState>();
         stateMachine->addState<MarioJumpState>();
         stateMachine->setState("MarioIdleState");
+
+        this->addComponent<MoveComponent>();
 
         this->tag = "mario:" + std::to_string(this->id);
         className = "Mario";
@@ -136,6 +138,10 @@ public:
 
     bool getIsPlayer() const {
         return isPlayer;
+    }
+
+    sf::Vector2f getCenter() override {
+        return this->position + getComponent<Collision>()->getOffset() + this->size * 0.5f;
     }
 
 private:

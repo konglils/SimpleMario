@@ -127,7 +127,7 @@ public:
         return position;
     }
 
-    sf::Vector2f getCenter() const {
+    virtual sf::Vector2f getCenter() {
         return position + size / 2.f;
     }
 

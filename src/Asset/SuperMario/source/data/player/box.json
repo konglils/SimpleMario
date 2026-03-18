@@ -1,0 +1,61 @@
+{
+  "frames": [
+    {
+      "frame_name": "box_frame",
+      "texture_name": "tile_set",
+      "frame": [
+        {
+          "textureRect": {
+            "rectLeft": 384,
+            "rectTop": 0,
+            "rectWidth": 16,
+            "rectHeight": 16
+          },
+          "origin": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "scale": {
+            "x": 4.0,
+            "y": 4.0
+          },
+          "duration": 200
+        },
+        {
+          "textureRect": {
+            "rectLeft": 400,
+            "rectTop": 0,
+            "rectWidth": 16,
+            "rectHeight": 16
+          },
+          "origin": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "scale": {
+            "x": 4.0,
+            "y": 4.0
+          },
+          "duration": 200
+        },
+        {
+          "textureRect": {
+            "rectLeft": 416,
+            "rectTop": 0,
+            "rectWidth": 16,
+            "rectHeight": 16
+          },
+          "origin": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "scale": {
+            "x": 4.0,
+            "y": 4.0
+          },
+          "duration": 200
+        }
+      ]
+    }
+  ]
+}

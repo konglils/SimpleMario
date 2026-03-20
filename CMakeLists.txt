@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # 设置 SFML 路径
 set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
-set(WIN_STATIC_LINK ON)
+set(WIN_STATIC_LINK OFF)
 
 if(WIN_STATIC_LINK)
     add_definitions(-DSFML_STATIC)

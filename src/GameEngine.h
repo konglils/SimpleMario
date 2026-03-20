@@ -20,6 +20,13 @@ public:
     }
 
     void init() {
+        // 加载 SuperMarioScene 的资源
+        std::cout << "Loading SuperMarioScene resources..." << std::endl;
+        AssetManager::getInstance().loadTexture("./Asset/SuperMario/resources/graphics");
+        AssetManager::getInstance().loadSoundBuffer("./Asset/SuperMario/resources/sound");
+        FrameManager::getInstance().loadFrame();
+        std::cout << "SuperMarioScene resources loaded." << std::endl;
+
         window = new sf::RenderWindow(sf::VideoMode(1200, 960), "GameEngine");
         scene_manager = std::make_shared<SceneManager>();
         scene_manager->addScene<GameScene>(window);

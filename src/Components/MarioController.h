@@ -40,7 +40,7 @@ public:
         }
         auto state = owner->getComponent<StateMachine>();
         if (state && state->getCurrentStateName() != "MarioJumpState")
-            moveComponent->setSpeedY(-1200.f);
+            moveComponent->setSpeedY(-900.f);
     }
 
     void runLeft() const {

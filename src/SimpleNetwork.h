@@ -6,7 +6,8 @@
 #include <SFML/Network.hpp>
 #include <iostream>
 #include "Mario.h"
-#include "nlohmann/json.hpp"
+#include <ctime>
+#include <iomanip>
 
 class SimpleNetwork {
 public:
@@ -151,7 +152,11 @@ public:
 
             clients.emplace_back(newClient);
 
-            std::cout << "New client connected!" << std::endl;
+            // 获取当前时间
+            const std::time_t now = std::time(nullptr);
+            const std::tm* local_tm = std::localtime(&now);
+
+            std::cout << '[' << std::put_time(local_tm, "%Y-%m-%d %H:%M:%S") << "] New client connected!" << std::endl;
         }
 
         // 处理客户端数据
@@ -182,7 +187,9 @@ public:
                 packet >> type;
                 if (type == 0) {
                     marioController->jump();
-                    players[client.get()]->getComponent<StateMachine>()->setState("MarioJumpState");
+                    const auto& state_machine = players[client.get()]->getComponent<StateMachine>();
+                    state_machine->setState("MarioJumpState");
+                    std::dynamic_pointer_cast<MarioJumpState>(state_machine->getCurrentState())->setJumpTimer();
                 } else if (type == 1) {
                     marioController->runLeft();
                 } else if (type == 2) {
@@ -347,6 +354,7 @@ private:
     sf::TcpListener listener;
     std::vector<std::shared_ptr<sf::TcpSocket>> clients;
     std::unordered_map<sf::TcpSocket*, std::shared_ptr<GameObject>> players;
+    // 需要同步的游戏对象
     std::vector<std::shared_ptr<GameObject>> game_objects;
     int past_time = 0;
 };

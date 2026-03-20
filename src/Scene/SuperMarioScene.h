@@ -24,9 +24,6 @@ public:
         if (is_init) return;
         is_init = true;
         collisionSystem = std::make_unique<CollisionSystem>();
-        AssetManager::getInstance().loadTexture("./Asset/SuperMario/resources/graphics");
-        AssetManager::getInstance().loadSoundBuffer("./Asset/SuperMario/resources/sound");
-        FrameManager::getInstance().loadFrame();
 
         bg.setTexture(AssetManager::getInstance().getTexture("level_1"));
         const float bg_scale = static_cast<float>(window->getSize().y) / bg.getLocalBounds().height;
@@ -70,7 +67,7 @@ public:
     void initDynamicObjects() {
         if (is_initDynamicObjects) return;
         is_initDynamicObjects = true;
-        std::shared_ptr<Mario> mario = std::make_shared<Mario>(100.f, -500.f);
+        std::shared_ptr<Mario> mario = std::make_shared<Mario>(100.f, 100.f);
         this->addObjectWithNetwork(mario);
     }
 

@@ -49,6 +49,7 @@ public:
             } else if (event.key.code == sf::Keyboard::W) {
                 jump_sound.play();
                 owner->getComponent<StateMachine>()->setState("MarioJumpState");
+                std::dynamic_pointer_cast<MarioJumpState>(owner->getComponent<StateMachine>()->getCurrentState())->setJumpTimer();
             }
         }
     }

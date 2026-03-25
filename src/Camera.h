@@ -48,6 +48,10 @@ public:
         updateView();
     }
 
+    void setMouseControl(const bool flag) {
+        this->mouseControl = flag;
+    }
+
     sf::Vector2f getCenter() const {
         return view.getCenter();
     }

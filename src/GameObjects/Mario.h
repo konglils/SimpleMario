@@ -63,6 +63,9 @@ public:
                 this->getComponent<StateMachine>()->setState("MarioJumpState");
         }
         GameObject::update(deltaTime);
+        if (this->getPosition().y > static_cast<float>(SceneContext::getInstance().getWindowHeight())) {
+            this->getComponent<MoveComponent>()->setPositionY(-this->getSize().y);
+        }
     }
 
     bool needGravity() {

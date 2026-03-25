@@ -34,8 +34,8 @@ public:
         className = "Player";
     }
     void render(sf::RenderWindow* window) override {
-        renderComponents(window);
         window->draw(shape);
+        renderComponents(window);
     }
     void start() override {
         GameObject::start();

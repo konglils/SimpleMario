@@ -50,7 +50,7 @@ public:
         if (w_is_pressed) {
             jump_timer.update(deltaTime);
             const auto& move_component = owner->getComponent<MoveComponent>();
-            move_component->addSpeed(sf::Vector2f(0.f, -11.f));
+            move_component->addSpeed(sf::Vector2f(0.f, -1815.f * deltaTime.asSeconds()));
         }
     }
 

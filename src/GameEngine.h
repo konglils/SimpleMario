@@ -27,7 +27,7 @@ public:
         FrameManager::getInstance().loadFrame();
         std::cout << "SuperMarioScene resources loaded." << std::endl;
 
-        window = new sf::RenderWindow(sf::VideoMode(1200, 960), "GameEngine");
+        if (!window) window = new sf::RenderWindow(sf::VideoMode(1200, 960), "GameEngine");
         scene_manager = std::make_shared<SceneManager>();
         scene_manager->addScene<GameScene>(window);
         scene_manager->addScene<GameScene3D>(window);

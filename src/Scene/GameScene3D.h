@@ -6,6 +6,7 @@
 
 #include "Scene.h"
 #include "Cube3D.h"
+#include "Cube3DWithController.h"
 #include "NewModel3D.h"
 #include "Penguin3D.h"
 #include "Human3D.h"
@@ -22,8 +23,9 @@ public:
         is_init = true;
         // this->addObject(std::make_shared<Penguin3D>());
         // this->addObject(std::make_shared<Cube3D>());
+        this->addObject(std::make_shared<Cube3DWithController>());
         // this->addObject(std::make_shared<NewModel3D>());
-        this->addObject(std::make_shared<Human3D>());
+        // this->addObject(std::make_shared<Human3D>());
     }
 
     void handleEvent(sf::Event& event) override {

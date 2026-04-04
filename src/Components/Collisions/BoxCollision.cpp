@@ -5,6 +5,8 @@
 #include "BoxCollision.h"
 #include "CircleCollision.h"
 #include <iostream>
+
+#include "ConfigManager.h"
 #include "GameObject.h"
 
 BoxCollision::BoxCollision(const float x, const float y, const float width, const float height) {
@@ -31,6 +33,7 @@ void BoxCollision::update(const sf::Time& deltaTime) {
 }
 
 void BoxCollision::render(sf::RenderWindow *window) {
+    if (!ConfigManager::getInstance().game.debug) return;
     sf::RectangleShape rect(this->size);
     rect.setPosition(this->getCollisionPosition());
     rect.setFillColor(sf::Color::Transparent);

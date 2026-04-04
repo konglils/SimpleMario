@@ -1,0 +1,39 @@
+{
+  "window": {
+    "width": 1200,
+    "height": 960,
+    "title": "GameEngine",
+    "fps": 165
+  },
+  "assets": {
+    "textures": {
+      "superMario": "./Asset/SuperMario/resources/graphics"
+    },
+    "sounds": {
+      "superMario": "./Asset/SuperMario/resources/sound",
+      "music": "./Asset/SuperMario/resources/music"
+    },
+    "font": "./Asset/Font/Minecraft_AE.ttf",
+    "animations": {
+      "mario": "./Asset/SuperMario/source/data/player/mario.json",
+      "box": "./Asset/SuperMario/source/data/player/box.json"
+    },
+    "models": {
+      "penguin": "./Asset/penguin.obj",
+      "human": "./Asset/human.obj",
+      "cube": "./Asset/cube.obj",
+      "newModel": "./Asset/new_model.obj"
+    }
+  },
+  "network": {
+    "port": 8888,
+    "tickRate": 50,
+    "timeout": 5.0
+  },
+  "game": {
+    "gravity": 3200.0,
+    "playerSpeed": 500.0,
+    "jumpForce": 900.0,
+    "debug": false
+  }
+}

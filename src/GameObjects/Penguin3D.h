@@ -11,7 +11,7 @@ public:
     Penguin3D() {
         Model* p = ModelManager::getInstance().getModel("penguin");
         if (p == nullptr) {
-            ModelManager::getInstance().loadModel("./Asset/penguin.obj", "penguin");
+            ModelManager::getInstance().loadModel(ConfigManager::getInstance().getModelPath("penguin"), "penguin");
             this->model = ModelManager::getInstance().getModel("penguin");
         } else {
             this->model = p;

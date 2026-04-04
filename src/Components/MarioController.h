@@ -40,7 +40,7 @@ public:
         }
         auto state = owner->getComponent<StateMachine>();
         if (state && state->getCurrentStateName() != "MarioJumpState")
-            moveComponent->setSpeedY(-900.f);
+            moveComponent->setSpeedY(-ConfigManager::getInstance().game.jumpForce);
     }
 
     void runLeft() const {
@@ -48,7 +48,7 @@ public:
         if (!moveComponent) {
             moveComponent = owner->addComponent<MoveComponent>();
         }
-        moveComponent->setSpeedX(-500.f);
+        moveComponent->setSpeedX(-ConfigManager::getInstance().game.playerSpeed);
     }
 
     void runRight() const {
@@ -56,7 +56,7 @@ public:
         if (!moveComponent) {
             moveComponent = owner->addComponent<MoveComponent>();
         }
-        moveComponent->setSpeedX(500.f);
+        moveComponent->setSpeedX(ConfigManager::getInstance().game.playerSpeed);
     }
 
     void stopRun() const {

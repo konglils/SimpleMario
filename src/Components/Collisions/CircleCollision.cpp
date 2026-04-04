@@ -7,6 +7,8 @@
 #include "GameObject.h"
 #include <cmath>
 
+#include "ConfigManager.h"
+
 CircleCollision::CircleCollision(const float x, const float y, const float radius) {
     this->position = sf::Vector2f(x, y);
     this->radius = radius;
@@ -19,6 +21,7 @@ void CircleCollision::update(const sf::Time& deltaTime) {
 }
 
 void CircleCollision::render(sf::RenderWindow *window) {
+    if (!ConfigManager::getInstance().game.debug) return;
     sf::CircleShape shape(radius);
     shape.setPosition(this->getPos() - sf::Vector2f(radius, radius));
     // std::cout << shape.getPosition().x << " " << shape.getPosition().y << std::endl;

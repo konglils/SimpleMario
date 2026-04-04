@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "ConfigManager.h"
 
 class AssetManager {
 public:
@@ -58,7 +59,7 @@ public:
 
     const sf::Font& getFont() {
         if (!have_load_font) {
-            font.loadFromFile("./Asset/Font/Minecraft_AE.ttf");
+            font.loadFromFile(ConfigManager::getInstance().assets.font);
             have_load_font = true;
         }
         return font;

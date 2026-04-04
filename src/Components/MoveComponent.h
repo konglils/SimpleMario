@@ -18,6 +18,7 @@ public:
     }
 
     void render(sf::RenderWindow* window) override {
+        if (!ConfigManager::getInstance().game.debug) return;
         if (owner->speed.x == 0.f && owner->speed.y == 0.f) return;
         const auto center = owner->getCenter();
         drawArrow(window, center.x, center.y, center.x + owner->speed.x / 10.f, center.y + owner->speed.y / 10.f);

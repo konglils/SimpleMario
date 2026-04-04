@@ -11,6 +11,8 @@
 
 #include "AssetManager.h"
 #include <nlohmann/json_fwd.hpp>
+#include "ConfigManager.h"
+
 using json = nlohmann::json;
 
 class FrameManager {
@@ -29,8 +31,8 @@ public:
     }
 
     void loadFrame() {
-        loadFrameFromJson("./Asset/SuperMario/source/data/player/mario.json");
-        loadFrameFromJson("./Asset/SuperMario/source/data/player/box.json");
+        loadFrameFromJson(ConfigManager::getInstance().assets.frames["mario"].c_str());
+        loadFrameFromJson(ConfigManager::getInstance().assets.frames["box"].c_str());
     }
 
     void loadFrameFromJson(const char* path);

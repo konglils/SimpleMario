@@ -4,8 +4,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <memory>
+
+#include "ConfigManager.h"
 #include "GameScene.h"
-#include "Scene.h"
 #include "GameScene3D.h"
 #include "MenuScene.h"
 #include "SceneManager.h"
@@ -20,14 +21,19 @@ public:
     }
 
     void init() {
+        auto& config = ConfigManager::getInstance();
+        if (!config.load()) {
+            std::cerr << "Using default config" << std::endl;
+        }
         // 加载 SuperMarioScene 的资源
         std::cout << "Loading SuperMarioScene resources..." << std::endl;
-        AssetManager::getInstance().loadTexture("./Asset/SuperMario/resources/graphics");
-        AssetManager::getInstance().loadSoundBuffer("./Asset/SuperMario/resources/sound");
+        AssetManager::getInstance().loadTexture(config.getTexturePath("superMario").c_str());
+        AssetManager::getInstance().loadSoundBuffer(config.getSoundPath("superMario").c_str());
         FrameManager::getInstance().loadFrame();
         std::cout << "SuperMarioScene resources loaded." << std::endl;
 
-        if (!window) window = new sf::RenderWindow(sf::VideoMode(1200, 960), "GameEngine");
+        if (!window) window = new sf::RenderWindow(
+            sf::VideoMode(config.window.width, config.window.height), config.window.title);
         scene_manager = std::make_shared<SceneManager>();
         scene_manager->addScene<GameScene>(window);
         scene_manager->addScene<GameScene3D>(window);
@@ -37,7 +43,7 @@ public:
     }
 
     void start() const {
-        window->setFramerateLimit(165);
+        window->setFramerateLimit(ConfigManager::getInstance().window.fps);
         sf::Clock clock;
         while (window->isOpen()) {
             const sf::Time deltaTime = clock.restart();

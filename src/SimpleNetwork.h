@@ -46,7 +46,8 @@ public:
         }
         std::cout << "Connecting to " << address << ":" << port << "..." << std::endl;
 
-        if (clientSocket.connect(address, port, sf::seconds(5)) != sf::Socket::Done) {
+        if (clientSocket.connect(address, port,
+            sf::seconds(ConfigManager::getInstance().network.timeout)) != sf::Socket::Done) {
             std::cout << "Failed to connect to server!" << std::endl;
             return false;
         }
@@ -230,7 +231,7 @@ public:
 
         // 向客户端同步数据
         past_time += deltaTime.asMilliseconds();
-        if (past_time < 50) return;
+        if (past_time < ConfigManager::getInstance().network.tickRate) return;
         past_time = 0;
         for (const auto& client : clients) {
             for (const auto& obj : game_objects) {
@@ -349,7 +350,7 @@ public:
 
 private:
     NetworkType network_type = NetworkType::None;
-    unsigned int port = 8888;
+    unsigned int port = ConfigManager::getInstance().network.port;
     sf::TcpSocket clientSocket;
     sf::TcpListener listener;
     std::vector<std::shared_ptr<sf::TcpSocket>> clients;

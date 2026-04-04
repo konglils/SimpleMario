@@ -1,0 +1,81 @@
+//
+// Created by MINEC on 2026/4/4.
+//
+
+#pragma once
+
+#include <string>
+#include <unordered_map>
+#include <iostream>
+#include <nlohmann/json_fwd.hpp>
+
+using json = nlohmann::json;
+
+class ConfigManager {
+public:
+    static ConfigManager& getInstance() {
+        static ConfigManager instance;
+        return instance;
+    }
+
+    bool load();
+
+    // Window 配置
+    struct WindowConfig {
+        int width = 1200;
+        int height = 960;
+        std::string title = "GameEngine";
+        int fps = 165;
+    } window{};
+
+    // Assets 配置
+    struct AssetsConfig {
+        std::unordered_map<std::string, std::string> textures;
+        std::unordered_map<std::string, std::string> sounds;
+        std::unordered_map<std::string, std::string> frames;
+        std::unordered_map<std::string, std::string> models;
+        std::string font = "./Asset/Font/Minecraft_AE.ttf";
+    } assets;
+
+    // Network 配置
+    struct NetworkConfig {
+        int port = 8888;
+        int tickRate = 20;
+        float timeout = 5.0f;
+    } network{};
+
+    // Game 配置
+    struct GameConfig {
+        float gravity = 3200.0f;
+        float playerSpeed = 200.0f;
+        float jumpForce = 400.0f;
+        bool debug = true;
+    } game{};
+
+    // 便捷访问方法
+    std::string getTexturePath(const std::string& name) const {
+        const auto it = assets.textures.find(name);
+        return it != assets.textures.end() ? it->second : "";
+    }
+
+    std::string getSoundPath(const std::string& name) const {
+        const auto it = assets.sounds.find(name);
+        return it != assets.sounds.end() ? it->second : "";
+    }
+
+    std::string getModelPath(const std::string& name) const {
+        const auto it = assets.models.find(name);
+        return it != assets.models.end() ? it->second : "";
+    }
+
+private:
+    ConfigManager() = default;
+
+    void parseWindow(const json& j);
+
+    void parseAssets(const json& j);
+
+    void parseNetwork(const json& j);
+
+    void parseGame(const json& j);
+};

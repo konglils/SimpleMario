@@ -34,7 +34,7 @@ public:
         return name;
     }
 private:
-    float gravity = 3200.f;
+    float gravity = ConfigManager::getInstance().game.gravity;
     std::string name = "GravityComponent";
 };
 

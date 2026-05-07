@@ -62,6 +62,7 @@ void ConfigManager::parseAssets(const json& j) {
 }
 
 void ConfigManager::parseNetwork(const json& j) {
+    network.serverIp = j.value("serverIp", network.serverIp);
     network.port = j.value("port", network.port);
     network.tickRate = j.value("tickRate", network.tickRate);
     network.timeout = j.value("timeout", network.timeout);

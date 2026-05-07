@@ -12,7 +12,7 @@ public:
     NewModel3D() {
         Model* p = ModelManager::getInstance().getModel("new_model");
         if (p == nullptr) {
-            ModelManager::getInstance().loadModel(ConfigManager::getInstance().getModelPath("new_model"), "new_model");
+            ModelManager::getInstance().loadModel(ConfigManager::getInstance().getModelPath("newModel"), "new_model");
             this->model = ModelManager::getInstance().getModel("new_model");
         } else {
             this->model = p;

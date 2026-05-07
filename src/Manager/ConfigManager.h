@@ -39,6 +39,7 @@ public:
 
     // Network 配置
     struct NetworkConfig {
+        std::string serverIp = "127.0.0.1";
         int port = 8888;
         int tickRate = 20;
         float timeout = 5.0f;

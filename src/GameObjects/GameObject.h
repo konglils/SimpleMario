@@ -9,22 +9,14 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include "Collision.h"
 
 class GameObject {
     friend class MoveComponent;
     friend class StateMachine;
 public:
-    GameObject() : position(0, 0), size(0, 0), speed(0, 0), active(true), started(false) {
-        this->id = idCounter++;
-    }
-    GameObject(const float posX, const float posY, const float width, const float height) {
-        this->position = sf::Vector2f(posX, posY);
-        this->size = sf::Vector2f(width, height);
-        this->speed = sf::Vector2f(0, 0);
-        this->started = false;
-        this->active = true;
-        this->id = idCounter++;
-    }
+    GameObject();
+    GameObject( float posX,  float posY,  float width,  float height);
     virtual ~GameObject() = default;
     virtual void handleEvent(sf::Event& e) {
         handleComponents(e);
@@ -46,6 +38,13 @@ public:
     }
     bool hasStarted() const {
         return started;
+    }
+    bool isDestroy() const {
+        return is_destroy;
+    }
+    void destroy() {
+        is_destroy = true;
+        active = false;
     }
     template <typename T, typename... Args>
     std::shared_ptr<T> addComponent(Args&&... args) {
@@ -163,41 +162,11 @@ public:
         return className;
     }
 
-    void updateComponents(sf::Time deltaTime) {
-        for (const auto key : components_vector) {
-            auto it = components.find(key);
-            if (it == components.end()) {
-                std::cerr << "Component not found: " << key << std::endl;
-                continue;
-            }
-            if (components[key]->getActive())
-                components[key]->update(deltaTime);
-        }
-    }
+    void updateComponents(sf::Time deltaTime);
 
-    void renderComponents(sf::RenderWindow* window) {
-        for (const auto key : components_vector) {
-            auto it = components.find(key);
-            if (it == components.end()) {
-                std::cerr << "Component not found: " << key << std::endl;
-                continue;
-            }
-            if (components[key]->getActive())
-                components[key]->render(window);
-        }
-    }
+    void renderComponents(sf::RenderWindow* window);
 
-    void handleComponents(sf::Event& e) {
-        for (const auto key : components_vector) {
-            auto it = components.find(key);
-            if (it == components.end()) {
-                std::cerr << "Component not found: " << key << std::endl;
-                continue;
-            }
-            if (components[key]->getActive())
-                components[key]->handleEvent(e);
-        }
-    }
+    void handleComponents(sf::Event& e);
 
 protected:
     virtual void setPosition(const float posX, const float posY) {
@@ -210,6 +179,7 @@ protected:
     bool active;
     bool moveAble{true};
     bool started;
+    bool is_destroy{false};
     unsigned int id;
     std::string tag = "game_object:";
     std::string className = "GameObject";

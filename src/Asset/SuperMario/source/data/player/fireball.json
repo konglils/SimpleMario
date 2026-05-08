@@ -1,0 +1,135 @@
+{
+    "frames": [
+        {
+            "frame_name": "fireball_frame",
+            "texture_name": "item_objects",
+            "frame": [
+                {
+                    "textureRect": {
+                        "rectLeft": 96,
+                        "rectTop": 144,
+                        "rectWidth": 8,
+                        "rectHeight": 8
+                    },
+                    "origin": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "scale": {
+                        "x": 4.0,
+                        "y": 4.0
+                    },
+                    "duration": 100
+                },
+                {
+                    "textureRect": {
+                        "rectLeft": 104,
+                        "rectTop": 144,
+                        "rectWidth": 8,
+                        "rectHeight": 8
+                    },
+                    "origin": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "scale": {
+                        "x": 4.0,
+                        "y": 4.0
+                    },
+                    "duration": 100
+                },
+                {
+                    "textureRect": {
+                        "rectLeft": 96,
+                        "rectTop": 152,
+                        "rectWidth": 8,
+                        "rectHeight": 8
+                    },
+                    "origin": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "scale": {
+                        "x": 4.0,
+                        "y": 4.0
+                    },
+                    "duration": 100
+                },
+                {
+                    "textureRect": {
+                        "rectLeft": 104,
+                        "rectTop": 152,
+                        "rectWidth": 8,
+                        "rectHeight": 8
+                    },
+                    "origin": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "scale": {
+                        "x": 4.0,
+                        "y": 4.0
+                    },
+                    "duration": 100
+                }
+            ]
+        },
+        {
+            "frame_name": "explosion_frame",
+            "texture_name": "item_objects",
+            "frame": [
+                {
+                    "textureRect": {
+                        "rectLeft": 112,
+                        "rectTop": 144,
+                        "rectWidth": 16,
+                        "rectHeight": 16
+                    },
+                    "origin": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "scale": {
+                        "x": 4.0,
+                        "y": 4.0
+                    },
+                    "duration": 50
+                },
+                {
+                    "textureRect": {
+                        "rectLeft": 112,
+                        "rectTop": 160,
+                        "rectWidth": 16,
+                        "rectHeight": 16
+                    },
+                    "origin": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "scale": {
+                        "x": 4.0,
+                        "y": 4.0
+                    },
+                    "duration": 50
+                },
+                {
+                    "textureRect": {
+                        "rectLeft": 112,
+                        "rectTop": 176,
+                        "rectWidth": 16,
+                        "rectHeight": 16
+                    },
+                    "origin": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "scale": {
+                        "x": 4.0,
+                        "y": 4.0
+                    },
+                    "duration": 50
+                }
+            ]
+        }
+    ]
+}

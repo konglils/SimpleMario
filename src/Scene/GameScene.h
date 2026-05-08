@@ -11,6 +11,8 @@
 #include "Scene.h"
 #include "CollisionSystem.h"
 #include "Circle.h"
+#include "SceneManager.h"
+#include "GravityComponent.h"
 
 
 class GameScene : public Scene {

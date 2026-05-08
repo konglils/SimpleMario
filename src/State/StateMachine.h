@@ -4,7 +4,7 @@
 
 #pragma once
 #include <unordered_map>
-
+#include <iostream>
 #include "BaseState.h"
 
 class StateMachine : public Component {

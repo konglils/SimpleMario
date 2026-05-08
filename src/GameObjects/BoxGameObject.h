@@ -7,6 +7,8 @@
 #include "BoxCollisionHandle.h"
 #include "EventBus.h"
 #include "GameObject.h"
+#include "BoxCollision.h"
+#include "Collision.h"
 
 class BoxGameObject : public GameObject {
 public:
@@ -19,6 +21,10 @@ public:
         this->addComponent<Collision, BoxCollision, true>();
         this->addComponent<CollisionHandle, BoxCollisionHandle>();
         className = "BoxGameObject";
+    }
+
+    ~BoxGameObject() override {
+        EventBus::getInstance().removeSubscribe("onCollision" + this->tag);
     }
 
     void start() override {

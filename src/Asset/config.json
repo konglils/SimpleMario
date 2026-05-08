@@ -16,7 +16,8 @@
     "font": "./Asset/Font/Minecraft_AE.ttf",
     "animations": {
       "mario": "./Asset/SuperMario/source/data/player/mario.json",
-      "box": "./Asset/SuperMario/source/data/player/box.json"
+      "box": "./Asset/SuperMario/source/data/player/box.json",
+      "fireball": "./Asset/SuperMario/source/data/player/fireball.json"
     },
     "models": {
       "penguin": "./Asset/penguin.obj",
@@ -35,6 +36,6 @@
     "gravity": 3200.0,
     "playerSpeed": 500.0,
     "jumpForce": 900.0,
-    "debug": false
+    "debug": true
   }
 }

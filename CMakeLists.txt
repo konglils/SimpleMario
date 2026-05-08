@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # 设置 SFML 路径
 set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
-set(WIN_STATIC_LINK OFF)
+set(WIN_STATIC_LINK ON)
 
 if(WIN_STATIC_LINK)
     add_definitions(-DSFML_STATIC)
@@ -36,16 +36,6 @@ if(WIN32)
     # Windows 下需区分 Debug/Release 后缀（如 sfml-graphics-d.lib）
     if(WIN_STATIC_LINK)
         # Windows 下静态链接
-        # 首先尝试查找 openal32
-        if(EXISTS "${SFML_ROOT}/lib/libopenal32.a")
-            set(OPENAL_LIB "openal32")
-        elseif(EXISTS "${SFML_ROOT}/lib/libopenal.a")
-            set(OPENAL_LIB "openal")
-        else()
-            # 如果没有找到，可能需要从系统路径查找
-            set(OPENAL_LIB "openal32")
-        endif()
-
         target_link_libraries(
                 ${PROJECT_NAME}
                 debug sfml-audio-s-d
@@ -61,7 +51,7 @@ if(WIN32)
                 optimized sfml-network-s
 
                 # OpenAL 音频库
-                ${OPENAL_LIB}
+                openal32
 
                 # 音频编解码器库
                 flac
@@ -74,18 +64,7 @@ if(WIN32)
                 freetype
                 opengl32
                 winmm
-                gdi32
                 ws2_32
-
-                # 额外系统库
-                kernel32
-                user32
-                shell32
-                ole32
-                oleaut32
-                uuid
-                comdlg32
-                advapi32
         )
     else()
         target_link_libraries(
@@ -104,5 +83,5 @@ if(WIN32)
     endif()
 else()
     # Linux/macOS 通常无后缀
-    target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system sfml-network)
+    target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system sfml-network sfml-audio)
 endif()

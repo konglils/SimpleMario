@@ -8,11 +8,11 @@
 #include "GameObject.h"
 #include "SceneContext.h"
 #include "MoveComponent.h"
+#include "ConfigManager.h"
 
 class GravityComponent : public Component {
 public:
     GravityComponent() = default;
-    void start() override {}
     void update(const sf::Time& deltaTime) override {
         float worldHeight = SceneContext::getInstance().getWindowHeight();
 
@@ -22,12 +22,6 @@ public:
         std::shared_ptr<MoveComponent> moveComponent = owner->getComponent<MoveComponent>();
         if (!moveComponent) return;
         moveComponent->setSpeedY(owner->getSpeed().y + gravity * deltaTime.asSeconds());
-
-    }
-    void render(sf::RenderWindow* window) override {
-
-    }
-    void handleEvent(const sf::Event& event) override {
 
     }
     std::string getName() {

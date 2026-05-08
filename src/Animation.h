@@ -37,9 +37,13 @@ public:
             currentFrameDuration = 0;
             if (back) {
                 if (currentFrame == 0) add = 1;
-                else if (currentFrame == frames->size() - 1) add = -1;
+                else if (currentFrame == frames->size() - 1) {
+                    add = -1;
+                    over = true;
+                }
                 currentFrame = currentFrame + add;
             } else {
+                if (currentFrame + 1 == frames->size()) over = true;
                 currentFrame = (currentFrame + 1) % frames->size();
             }
         }
@@ -49,6 +53,11 @@ public:
         sf::Sprite& sprite_ = this->getSprite();
         sprite_.setPosition(position);
         window->draw(sprite_);
+    }
+
+    // 获取动画是否完整播放完一遍
+    bool isOver() const {
+        return over;
     }
 
     Frame& getFrame() const {
@@ -67,11 +76,20 @@ public:
         return sprite;
     }
 
+    float getFrameWidth() const {
+        return getFrame().scale.x * static_cast<float>(getFrame().textureRect.width);
+    }
+
+    float getFrameHeight() const {
+        return getFrame().scale.y * static_cast<float>(getFrame().textureRect.height);
+    }
+
 private:
     unsigned int currentFrame = 0;
     unsigned int currentFrameDuration = 0;
     std::vector<Frame>* frames{};
     sf::Sprite sprite;
     bool back = false;
+    bool over = false;
     int add = 1;
 };

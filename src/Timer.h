@@ -11,6 +11,7 @@ public:
     Timer() = default;
     ~Timer() = default;
 
+    // _aim_time: 毫秒
     void start(const int _aim_time, const bool _is_loop = false) {
         this->aim_time = _aim_time;
         this->started = true;

@@ -30,8 +30,16 @@ public:
 
     // 场景更新方法
     virtual void update(sf::Time deltaTime) {
-        for (const auto& obj : game_objects) {
-            if (obj->isActive()) {
+        // 删除已销毁的 GameObject
+        game_objects.erase(
+            std::remove_if(game_objects.begin(), game_objects.end(), [](const auto& obj) {
+                return obj->isDestroy();
+            }),
+            game_objects.end()
+        );
+        // 必须用这种 for 循环，因为 game_objects 可能会改变，扩容导致迭代器失效
+        for (int i = 0; i < game_objects.size(); ++i) {
+            if (const auto& obj = game_objects[i]; obj->isActive()) {
                 if (obj->hasStarted()) obj->update(deltaTime);
                 else obj->start();
             }
@@ -50,7 +58,9 @@ public:
     // 场景事件处理方法
     virtual void handleEvent(sf::Event& event) {
         if (camera) camera->handleEvent(event);
-        for (const auto& obj : game_objects) {
+        // 必须用这种 for 循环，因为 game_objects 可能会改变，扩容导致迭代器失效
+        for (int i = 0; i < game_objects.size(); ++i) {
+            const auto& obj = game_objects[i];
             obj->handleEvent(event);
         }
         if (camera && event.type == sf::Event::Resized) {
@@ -85,6 +95,7 @@ public:
     }
 
     void removeObjectById(const unsigned int id) {
+        std::cout << "Scene::removeObjectById : Removing GameObject with id " << id << std::endl;
         game_objects_map.erase(id);
         for (auto it = game_objects.begin(); it != game_objects.end(); ++it) {
             if ((*it)->getId() == id) {

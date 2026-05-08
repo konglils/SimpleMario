@@ -17,12 +17,21 @@ public:
     void addObject(const std::shared_ptr<GameObject>& obj) {
         objects.push_back(obj);
     }
-    void checkCollisions() const {
+    void checkCollisions() {
+        // 清理已经销毁的游戏对象
+        objects.erase(
+            std::remove_if(objects.begin(), objects.end(), [](const auto& obj) {
+                return obj->isDestroy();
+            }),
+            objects.end()
+        );
+
         for (size_t i = 0; i < objects.size(); i++) {
             for (size_t j = i + 1; j < objects.size(); j++) {
                 const auto a = objects[i];
                 const auto b = objects[j];
                 if (!a->getMoveAble() && !b->getMoveAble()) continue;
+                if (!a->isActive() || !b->isActive()) continue;
 
                 const auto a_c = a->getComponent<Collision>();
                 if (!a_c) continue;

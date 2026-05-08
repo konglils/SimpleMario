@@ -8,6 +8,7 @@
 #include "Mario.h"
 #include <ctime>
 #include <iomanip>
+#include "MarioController.h"
 
 class SimpleNetwork {
 public:

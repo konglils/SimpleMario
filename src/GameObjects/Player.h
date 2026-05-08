@@ -7,47 +7,23 @@
 #include <SFML/Graphics.hpp>
 #include "GameObject.h"
 #include "EventBus.h"
-#include "Events.h"
 #include <string>
 
-#include "CircleCollisionHandle.h"
-#include "CollisionHandle.h"
-#include "GravityComponent.h"
-#include "MoveComponent.h"
 
 class Player : public GameObject {
 public:
-    Player(const float x, const float y, const float radius, const std::string& tag = "player") {
-        shape.setRadius(radius);
-        this->position = sf::Vector2f(x, y);
-        this->size = sf::Vector2f(radius * 2, radius * 2);
-        shape.setPosition(x, y);
+    Player(float x, float y, float radius, const std::string& tag = "player");
 
-        this->addComponent<Collision, CircleCollision>(this->position.x + radius, this->position.y + radius, this->size.x / 2);
-        this->addComponent<CollisionHandle, CircleCollisionHandle>();
-        // this->addComponent<Collision, BoxCollision, true>();
-        // this->addComponent<CollisionHandle, BoxCollisionHandle>();
-
-        this->addComponent<MoveComponent>();
-        this->addComponent<GravityComponent>();
-        this->tag = tag + ":" + std::to_string(this->id);
-        className = "Player";
+    ~Player() override {
+        EventBus::getInstance().removeSubscribe("onCollision" + this->tag);
     }
+
     void render(sf::RenderWindow* window) override {
         window->draw(shape);
         renderComponents(window);
     }
-    void start() override {
-        GameObject::start();
-        EventBus::getInstance().subscribe<CollisionEvent>(
-            "onCollision" + this->tag,
-            [this](const CollisionEvent& collisionEvent) {
-                if (const auto& handler = this->getComponent<CollisionHandle>()) {
-                    handler->handleCollision(collisionEvent);
-                }
-            }
-        );
-    }
+
+    void start() override;
 
 private:
     void setPosition(const float x, const float y) override {

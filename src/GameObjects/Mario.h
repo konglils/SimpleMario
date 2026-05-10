@@ -10,14 +10,16 @@
 #include "Collision.h"
 #include "FireBall.h"
 #include "EventBus.h"
+#include "NetworkGameObject.h"
 
 
-class Mario : public GameObject {
+class Mario : public NetworkGameObject {
 public:
-    Mario(const float x, const float y, const bool isPlayer = true);
+    Mario(float x, float y, bool isPlayer = true);
 
     ~Mario() override {
         EventBus::getInstance().removeSubscribe("onCollision" + this->tag);
+        std::cout << this->getTag() << " Mario Destroyed" << std::endl;
     }
 
     void start() override;
@@ -39,6 +41,10 @@ public:
     sf::Vector2f getCenter() override {
         return this->position + getComponent<Collision>()->getOffset() + this->size * 0.5f;
     }
+
+    void serialize(sf::Packet& packet, NetworkMsg type) override;
+
+    void deserialize(sf::Packet& packet) override;
 
 private:
     bool isPlayer = true;

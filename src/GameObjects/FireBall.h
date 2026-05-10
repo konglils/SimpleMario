@@ -4,14 +4,13 @@
 
 #pragma once
 #include "Animation.h"
-#include "GameObject.h"
 #include "Events.h"
+#include "NetworkGameObject.h"
 
 
-
-class FireBall : public GameObject {
+class FireBall : public NetworkGameObject {
 public:
-    FireBall(GameObject* owner, float x, float y, float speed_x = 0.f);
+    FireBall(unsigned int owner_id, float x, float y, float speed_x = 0.f);
 
     ~FireBall() override;
 
@@ -25,9 +24,13 @@ public:
 
     void handleCollision(const CollisionEvent& event);
 
+    void serialize(sf::Packet& packet, NetworkMsg type) override;
+
+    void deserialize(sf::Packet& packet) override;
+
 private:
     bool is_exploded = false;
     Animation animation;
     Animation explosionAnimation;
-    GameObject* owner{nullptr};
+    unsigned int owner_id;
 };

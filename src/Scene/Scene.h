@@ -6,9 +6,11 @@
 #include <utility>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include "GameObject.h"
 #include "SceneContext.h"
 #include "Camera.h"
+#include "NetworkManager.h"
 
 class CollisionSystem;
 class SceneManager;
@@ -28,6 +30,14 @@ public:
 
     }
 
+    virtual std::shared_ptr<GameObject> spawnEntity() {
+        return nullptr;
+    }
+
+    virtual std::shared_ptr<GameObject> spawnEntity(sf::Packet& packet) {
+        return nullptr;
+    }
+
     // 场景更新方法
     virtual void update(sf::Time deltaTime) {
         // 删除已销毁的 GameObject
@@ -37,6 +47,13 @@ public:
             }),
             game_objects.end()
         );
+        for (auto it = game_objects_map.begin(); it != game_objects_map.end(); ) {
+            if (it->second->isDestroy()) {
+                it = game_objects_map.erase(it);
+            } else {
+                ++it;
+            }
+        }
         // 必须用这种 for 循环，因为 game_objects 可能会改变，扩容导致迭代器失效
         for (int i = 0; i < game_objects.size(); ++i) {
             if (const auto& obj = game_objects[i]; obj->isActive()) {
@@ -88,7 +105,7 @@ public:
 
     std::shared_ptr<GameObject> findGameObjectById(const unsigned int id) {
         if (game_objects_map.find(id) == game_objects_map.end()) {
-            std::cerr << "Scene::findGameObjectById : GameObject not found" << std::endl;
+            std::cerr << "Scene::findGameObjectById : GameObject with ID " << id << " are not found" << std::endl;
             return nullptr;
         }
         return game_objects_map[id];
@@ -137,6 +154,10 @@ public:
 
     [[nodiscard]] virtual CollisionSystem* getCollisionSystem() const {
         return nullptr;
+    }
+
+    virtual NetworkManager::NetworkType getNetworkType() const {
+        return NetworkManager::NetworkType::None;
     }
 
 protected:

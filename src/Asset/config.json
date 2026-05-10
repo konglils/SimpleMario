@@ -1,41 +1,41 @@
 {
-  "window": {
-    "width": 1200,
-    "height": 960,
-    "title": "GameEngine",
-    "fps": 165
-  },
-  "assets": {
-    "textures": {
-      "superMario": "./Asset/SuperMario/resources/graphics"
+    "window": {
+        "width": 1200,
+        "height": 960,
+        "title": "GameEngine",
+        "fps": 165
     },
-    "sounds": {
-      "superMario": "./Asset/SuperMario/resources/sound",
-      "music": "./Asset/SuperMario/resources/music"
+    "assets": {
+        "textures": {
+            "superMario": "./Asset/SuperMario/resources/graphics"
+        },
+        "sounds": {
+            "superMario": "./Asset/SuperMario/resources/sound",
+            "music": "./Asset/SuperMario/resources/music"
+        },
+        "font": "./Asset/Font/Minecraft_AE.ttf",
+        "animations": {
+            "mario": "./Asset/SuperMario/source/data/player/mario.json",
+            "box": "./Asset/SuperMario/source/data/player/box.json",
+            "fireball": "./Asset/SuperMario/source/data/player/fireball.json"
+        },
+        "models": {
+            "penguin": "./Asset/penguin.obj",
+            "human": "./Asset/human.obj",
+            "cube": "./Asset/cube.obj",
+            "newModel": "./Asset/new_model.obj"
+        }
     },
-    "font": "./Asset/Font/Minecraft_AE.ttf",
-    "animations": {
-      "mario": "./Asset/SuperMario/source/data/player/mario.json",
-      "box": "./Asset/SuperMario/source/data/player/box.json",
-      "fireball": "./Asset/SuperMario/source/data/player/fireball.json"
+    "network": {
+        "serverIp": "127.0.0.1",
+        "port": 8888,
+        "tickRate": 50,
+        "timeout": 5.0
     },
-    "models": {
-      "penguin": "./Asset/penguin.obj",
-      "human": "./Asset/human.obj",
-      "cube": "./Asset/cube.obj",
-      "newModel": "./Asset/new_model.obj"
+    "game": {
+        "gravity": 3200.0,
+        "playerSpeed": 500.0,
+        "jumpForce": 900.0,
+        "debug": true
     }
-  },
-  "network": {
-    "serverIp": "127.0.0.1",
-    "port": 8888,
-    "tickRate": 50,
-    "timeout": 5.0
-  },
-  "game": {
-    "gravity": 3200.0,
-    "playerSpeed": 500.0,
-    "jumpForce": 900.0,
-    "debug": true
-  }
 }

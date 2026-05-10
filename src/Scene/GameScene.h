@@ -48,7 +48,7 @@ public:
         this->addObject(box);
 
         // 左墙
-        std::shared_ptr<Ground> wall1 = std::make_shared<Ground>(0-200, 0, 10 + 200, 960, "wall1");
+        std::shared_ptr<Ground> wall1 = std::make_shared<Ground>(-200, 0, 10 + 200, 960, "wall1");
         this->addObject(wall1);
         // 右墙
         std::shared_ptr<Ground> wall2 = std::make_shared<Ground>(1190, 0, 10 + 200, 960, "wall2");

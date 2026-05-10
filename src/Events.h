@@ -5,6 +5,7 @@
 
 #pragma once
 #include <memory>
+#include "GameObject.h"
 
 struct CollisionEvent {
     std::shared_ptr<GameObject> a;

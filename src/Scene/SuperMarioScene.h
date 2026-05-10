@@ -11,12 +11,15 @@
 #include "Scene.h"
 #include "CollisionSystem.h"
 #include "Mario.h"
+#include "NetworkManager.h"
 #include "SimpleNetwork.h"
 
 
 class SuperMarioScene : public Scene {
 public:
-    explicit SuperMarioScene(sf::RenderWindow* _window) : Scene(_window, "SuperMarioScene") {}
+    explicit SuperMarioScene(sf::RenderWindow* _window) : Scene(_window, "SuperMarioScene") {
+    }
+
     ~SuperMarioScene() override = default;
 
     void init() override {
@@ -31,10 +34,46 @@ public:
         initStaticObjects();
     }
 
+    std::shared_ptr<GameObject> spawnEntity() override {
+        auto obj = std::make_shared<Mario>(100.f, 100.f, false);
+        this->addObjectWithNetwork(obj);
+        return obj;
+    }
+
+    std::shared_ptr<GameObject> spawnEntity(sf::Packet& packet) override {
+        unsigned int id;
+        ObjectType obj_type;
+        packet >> id >> obj_type;
+        if (obj_type == ObjectType::MarioPlayer || obj_type == ObjectType::Mario) {
+            std::cout << "generated mario" << std::endl;
+            float x, y, s_x, s_y;
+            bool is_jump;
+            packet >> x >> y >> s_x >> s_y >> is_jump;
+            const auto player = std::make_shared<Mario>(x, y, obj_type == ObjectType::MarioPlayer);
+            player->setId(id);
+            const auto& move_component = player->getComponent<MoveComponent>();
+            move_component->setSpeed(s_x, s_y);
+            this->addObjectWithNetwork(player);
+            return player;
+        }
+        if (obj_type == ObjectType::FireBall) {
+            unsigned int owner_id;
+            float x, y, s_x, s_y;
+            packet >> owner_id >> x >> y >> s_x >> s_y;
+            const auto fire_ball = std::make_shared<FireBall>(owner_id, x, y);
+            fire_ball->setId(id);
+            fire_ball->getComponent<MoveComponent>()->setSpeed(sf::Vector2f(s_x, s_y));
+            this->addObjectWithNetwork(fire_ball);
+            return fire_ball;
+        }
+        std::cerr << "Invalid object type" << std::endl;
+        return nullptr;
+    }
+
     void initStaticObjects() {
         // 左墙
         std::shared_ptr<Ground> wall1 = std::make_shared<Ground>(0, 0, 10,
-            ConfigManager::getInstance().window.height, "wall1");
+                                                                 ConfigManager::getInstance().window.height, "wall1");
         this->addObject(wall1);
 
         std::vector<std::pair<int, int>> bricks = {
@@ -131,9 +170,13 @@ public:
         simple_network.connectToServer(address);
     }
 
+    NetworkManager::NetworkType getNetworkType() const override {
+        return simple_network.getNetworkType();
+    }
+
 private:
     std::unique_ptr<CollisionSystem> collisionSystem;
-    SimpleNetwork simple_network;
+    NetworkManager simple_network;
     sf::Sprite bg;
     bool is_initDynamicObjects = false;
 };

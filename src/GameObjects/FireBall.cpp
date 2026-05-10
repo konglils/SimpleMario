@@ -10,8 +10,8 @@
 #include "EventBus.h"
 #include "BoxCollision.h"
 
-FireBall::FireBall(GameObject* owner, const float x, const float y, const float speed_x) {
-    this->owner = owner;
+FireBall::FireBall(const unsigned int owner_id, const float x, const float y, const float speed_x) {
+    this->owner_id = owner_id;
     this->position = sf::Vector2f(x, y);
 
     animation.setFrames(FrameManager::getInstance().getFrame("fireball_frame"));
@@ -28,6 +28,7 @@ FireBall::FireBall(GameObject* owner, const float x, const float y, const float 
 }
 
 FireBall::~FireBall() {
+    std::cout << this->getTag() << " FireBall destroyed" << std::endl;
     EventBus::getInstance().removeSubscribe("onCollision" + this->tag);
 }
 
@@ -70,12 +71,12 @@ void FireBall::handleCollision(const CollisionEvent& event) {
     auto& this_ = event.a;
         auto& other = event.b;
 
-        if (owner == other.get()) return;
+        if (owner_id == other->getId()) return;
 
         // std::cout << this_->getTag() << ' ' << other->getTag() << std::endl;
 
         if (!this_->getMoveAble()) return;
-        std::shared_ptr<MoveComponent> moveComponent = this_->getComponent<MoveComponent>();
+        const std::shared_ptr<MoveComponent>& moveComponent = this_->getComponent<MoveComponent>();
         if (!moveComponent) return;
 
         // 计算 x 方向和 y 方向的重合度
@@ -115,4 +116,17 @@ void FireBall::handleCollision(const CollisionEvent& event) {
                 moveComponent->moveCollisionYTo(event.b_position.y + other->getSize().y);
             }
         }
+}
+
+void FireBall::serialize(sf::Packet& packet, const NetworkMsg type) {
+    // NetworkManager 检测到火球的产生后自动调用通知所有的客户端
+    if (type == NetworkMsg::SpawnFireBall || type == NetworkMsg::SpawnObject) { // 交给 Scene 处理
+        packet << NetworkMsg::SpawnFireBall;
+        packet << this->id << ObjectType::FireBall << this->owner_id << this->position.x <<
+            this->position.y << this->getSpeed().x << this->getSpeed().y;
+    }
+}
+
+void FireBall::deserialize(sf::Packet& packet) {
+
 }

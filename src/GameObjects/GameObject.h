@@ -14,38 +14,49 @@
 class GameObject {
     friend class MoveComponent;
     friend class StateMachine;
+
 public:
     GameObject();
-    GameObject( float posX,  float posY,  float width,  float height);
+    GameObject(float posX, float posY, float width, float height);
     virtual ~GameObject() = default;
+
     virtual void handleEvent(sf::Event& e) {
         handleComponents(e);
     }
+
     virtual void update(sf::Time deltaTime) {
         updateComponents(deltaTime);
     }
+
     virtual void render(sf::RenderWindow* window) {
         renderComponents(window);
     }
+
     virtual void start() {
         started = true;
     }
+
     bool isActive() const {
         return active;
     }
+
     void setActive(const bool state) {
         active = state;
     }
+
     bool hasStarted() const {
         return started;
     }
+
     bool isDestroy() const {
         return is_destroy;
     }
+
     void destroy() {
         is_destroy = true;
         active = false;
     }
+
     template <typename T, typename... Args>
     std::shared_ptr<T> addComponent(Args&&... args) {
         const size_t componentId = typeid(T).hash_code();

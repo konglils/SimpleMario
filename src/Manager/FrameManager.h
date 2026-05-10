@@ -7,11 +7,11 @@
 #include <unordered_map>
 #include <Animation.h>
 #include <fstream>
-#include <iostream>
 
 #include "AssetManager.h"
 #include <nlohmann/json_fwd.hpp>
 #include "ConfigManager.h"
+#include "Logger.h"
 
 using json = nlohmann::json;
 
@@ -23,8 +23,8 @@ public:
     }
 
     std::vector<Animation::Frame>* getFrame(const std::string& name) {
-        if (frames.find(name) == frames.end()) {
-            std::cerr << "Error: animation " << name << " does not exist!" << std::endl;
+        if (!frames.contains(name)) {
+            LOG_ERROR_FMT("Error: animation {} does not exist!", name);
             return nullptr;
         }
         return &frames[name];

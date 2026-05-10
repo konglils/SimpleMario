@@ -4,7 +4,6 @@
 
 #pragma once
 #include <filesystem>
-#include <iostream>
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>

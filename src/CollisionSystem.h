@@ -8,7 +8,6 @@
 #include <vector>
 #include <memory>
 #include "EventBus.h"
-#include <iostream>
 #include "Events.h"
 #include "Collision.h"
 
@@ -19,12 +18,9 @@ public:
     }
     void checkCollisions() {
         // 清理已经销毁的游戏对象
-        objects.erase(
-            std::remove_if(objects.begin(), objects.end(), [](const auto& obj) {
-                return obj->isDestroy();
-            }),
-            objects.end()
-        );
+        std::erase_if(objects, [](const auto& obj) {
+            return obj->isDestroy();
+        });
 
         for (size_t i = 0; i < objects.size(); i++) {
             for (size_t j = i + 1; j < objects.size(); j++) {

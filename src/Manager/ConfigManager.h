@@ -6,7 +6,6 @@
 
 #include <string>
 #include <unordered_map>
-#include <iostream>
 #include <nlohmann/json_fwd.hpp>
 
 #define CONFIG ConfigManager::getInstance()

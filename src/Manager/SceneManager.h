@@ -25,8 +25,8 @@ public:
     }
 
     void loadScene(const std::string& scene_name) {
-        if (scenes.find(scene_name) == scenes.end()) {
-            std::cerr << "Scene " << scene_name << " not found" << std::endl;
+        if (!scenes.contains(scene_name)) {
+            LOG_ERROR_FMT("Scene {} not found", scene_name);
             return;
         }
         if (currentScene) currentScene->exit();

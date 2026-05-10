@@ -69,7 +69,7 @@ public:
     }
     void render(sf::RenderWindow* window) override {
         if (owner) this->getAnimation().render(window, owner->getPosition());
-        else std::cout << "MarioRunState: owner is nullptr" << std::endl;
+        else LOG_ERROR("owner is nullptr");
     }
 
     bool getIsLeft() const {

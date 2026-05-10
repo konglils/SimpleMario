@@ -3,7 +3,8 @@
 //
 
 #include "GameObject.h"
-#include <iostream>
+
+#include "Logger.h"
 
 GameObject::GameObject() : position(0, 0), size(0, 0), speed(0, 0), active(true), started(false) {
     this->id = idCounter++;
@@ -23,7 +24,7 @@ void GameObject::updateComponents(sf::Time deltaTime) {
     for (const auto key : components_vector) {
         auto it = components.find(key);
         if (it == components.end()) {
-            std::cerr << "Component not found: " << key << std::endl;
+            LOG_ERROR_FMT("Component not found: {}", key);
             continue;
         }
         if (components[key]->getActive())
@@ -35,7 +36,7 @@ void GameObject::renderComponents(sf::RenderWindow* window) {
     for (const auto key : components_vector) {
         auto it = components.find(key);
         if (it == components.end()) {
-            std::cerr << "Component not found: " << key << std::endl;
+            LOG_ERROR_FMT("Component not found: {}", key);
             continue;
         }
         if (components[key]->getActive())
@@ -47,7 +48,7 @@ void GameObject::handleComponents(sf::Event& e) {
     for (const auto key : components_vector) {
         auto it = components.find(key);
         if (it == components.end()) {
-            std::cerr << "Component not found: " << key << std::endl;
+            LOG_ERROR_FMT("Component not found: {}", key);
             continue;
         }
         if (components[key]->getActive())

@@ -1,44 +1,57 @@
 cmake_minimum_required(VERSION 3.20)
-project(GameEngine)
+project(GameEngine LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # 设置 SFML 路径
-set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
-set(WIN_STATIC_LINK OFF)
+if (WIN32)
+    set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
+    set(WIN_STATIC_LINK OFF)
+else ()
+    set(SFML_ROOT "./lib/SFML-2.6.1-linux")
+endif ()
 
-if(WIN_STATIC_LINK)
+if (WIN_STATIC_LINK)
     add_definitions(-DSFML_STATIC)
     set(CMAKE_EXE_LINKER_FLAGS "-static")
-endif()
+endif ()
 
-# 包含头文件
-include_directories(${SFML_ROOT}/include)
-include_directories(./lib)
-include_directories(src)
-include_directories(src/Components)
-include_directories(src/Components/Collisions)
-include_directories(src/Components/CollisionHandles)
-include_directories(src/GameObjects)
-include_directories(src/Scene)
-include_directories(src/State)
-include_directories(src/Manager)
-include_directories(src/Network)
+set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
-# 定义源文件列表
-file(GLOB_RECURSE SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+file(GLOB_RECURSE SRC CONFIGURE_DEPENDS ${SRC_DIR}/*.cpp)
+
+add_executable(${PROJECT_NAME} ${SRC})
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+target_include_directories(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${SRC_DIR}
+        ${SRC_DIR}/Components
+        ${SRC_DIR}/Components/Collisions
+        ${SRC_DIR}/Components/CollisionHandles
+        ${SRC_DIR}/GameObjects
+        ${SRC_DIR}/Scene
+        ${SRC_DIR}/State
+        ${SRC_DIR}/Manager
+        ${SRC_DIR}/Network
+
+        ${LIB_DIR}
+        ${SFML_ROOT}/include
 )
 
-link_directories(${SFML_ROOT}/lib)
-add_executable(${PROJECT_NAME} ${SOURCES})
+target_link_directories(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${SFML_ROOT}/lib
+)
 
-if(WIN32)
-    # Windows 下需区分 Debug/Release 后缀（如 sfml-graphics-d.lib）
-    if(WIN_STATIC_LINK)
+if (WIN32)
+    if (WIN_STATIC_LINK)
         # Windows 下静态链接
         target_link_libraries(
                 ${PROJECT_NAME}
+                PRIVATE
                 debug sfml-audio-s-d
                 debug sfml-graphics-s-d
                 debug sfml-window-s-d
@@ -53,23 +66,22 @@ if(WIN32)
 
                 # OpenAL 音频库
                 openal32
-
                 # 音频编解码器库
                 flac
                 vorbisenc
                 vorbisfile
                 vorbis
                 ogg
-
                 # 其他依赖库
                 freetype
                 opengl32
                 winmm
                 ws2_32
         )
-    else()
+    else ()
         target_link_libraries(
                 ${PROJECT_NAME}
+                PRIVATE
                 debug sfml-graphics-d
                 debug sfml-window-d
                 debug sfml-system-d
@@ -81,8 +93,21 @@ if(WIN32)
                 optimized sfml-network
                 optimized sfml-audio
         )
-    endif()
-else()
-    # Linux/macOS 通常无后缀
-    target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system sfml-network sfml-audio)
-endif()
+    endif ()
+else ()
+    target_link_libraries(
+            ${PROJECT_NAME}
+            PRIVATE
+            sfml-graphics
+            sfml-window
+            sfml-system
+            sfml-audio
+            sfml-network
+    )
+endif ()
+
+add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${SRC_DIR}/Asset/
+        $<TARGET_FILE_DIR:GameEngine>/Asset
+)

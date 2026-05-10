@@ -10,7 +10,6 @@
 #include <vector>
 #include <any>
 #include <SFML/Graphics.hpp>
-#include <iostream>
 
 class EventBus {
 public:
@@ -36,8 +35,8 @@ public:
     }
 
     void removeSubscribe(const std::string& event_name) {
-        if (listeners.find(event_name) == listeners.end()) {
-            std::cout << "EventBus::removeSubscribe " << event_name << " not found" << std::endl;
+        if (!listeners.contains(event_name)) {
+            LOG_WARN_FMT("{} not found", event_name);
             return;
         }
         listeners.erase(event_name);

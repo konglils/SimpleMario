@@ -45,12 +45,12 @@ public:
         ObjectType obj_type;
         packet >> id >> obj_type;
         if (obj_type == ObjectType::MarioPlayer || obj_type == ObjectType::Mario) {
-            std::cout << "generated mario" << std::endl;
             float x, y, s_x, s_y;
             bool is_jump;
             packet >> x >> y >> s_x >> s_y >> is_jump;
             const auto player = std::make_shared<Mario>(x, y, obj_type == ObjectType::MarioPlayer);
             player->setId(id);
+            LOG_DEBUG_FMT("Create mario, id:{}, x:{}, y:{}, s_x:{}, s_y:{}, is_jump:{}", id, x, y, s_x, s_y, is_jump);
             const auto& move_component = player->getComponent<MoveComponent>();
             move_component->setSpeed(s_x, s_y);
             this->addObjectWithNetwork(player);
@@ -66,7 +66,7 @@ public:
             this->addObjectWithNetwork(fire_ball);
             return fire_ball;
         }
-        std::cerr << "Invalid object type" << std::endl;
+        LOG_ERROR("Invalid object type");
         return nullptr;
     }
 
@@ -147,7 +147,7 @@ public:
         Scene::handleEvent(event);
         if (event.type == sf::Event::MouseButtonPressed) {
             const sf::Vector2i pos = SceneContext::getInstance().getMousePosition();
-            std::cout << "SuperMarioScene:" << pos.x << ", " << pos.y << std::endl;
+            LOG_TRACE_FMT("Mouse clicked at ({}, {})", pos.x, pos.y);
         } else if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Escape) {
                 SceneContext::getInstance().getSceneManager()->loadScene("MenuScene");

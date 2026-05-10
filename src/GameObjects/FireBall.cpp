@@ -9,6 +9,7 @@
 #include "Collision.h"
 #include "EventBus.h"
 #include "BoxCollision.h"
+#include "Logger.h"
 
 FireBall::FireBall(const unsigned int owner_id, const float x, const float y, const float speed_x) {
     this->owner_id = owner_id;
@@ -28,7 +29,7 @@ FireBall::FireBall(const unsigned int owner_id, const float x, const float y, co
 }
 
 FireBall::~FireBall() {
-    // std::cout << this->getTag() << " FireBall destroyed" << std::endl;
+    LOG_TRACE_FMT("The object tagged {} is destroyed", this->getTag());
     EventBus::getInstance().removeSubscribe("onCollision" + this->tag);
 }
 

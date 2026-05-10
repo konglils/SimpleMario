@@ -4,7 +4,6 @@
 
 #include "BoxCollision.h"
 #include "CircleCollision.h"
-#include <iostream>
 
 #include "ConfigManager.h"
 #include "GameObject.h"

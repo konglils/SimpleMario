@@ -6,12 +6,14 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+#include "Logger.h"
+
 bool ConfigManager::load() {
     try {
         const auto path = "./Asset/config.json";
         std::ifstream file(path);
         if (!file.is_open()) {
-            std::cerr << "Failed to open config file: " << path << std::endl;
+            LOG_ERROR_FMT("Failed to open config file: {}", path);
             return false;
         }
 
@@ -25,7 +27,7 @@ bool ConfigManager::load() {
 
         return true;
     } catch (const std::exception& e) {
-        std::cerr << "Config parse error: " << e.what() << std::endl;
+        LOG_ERROR_FMT("Config parse error: {}", e.what());
         return false;
     }
 }

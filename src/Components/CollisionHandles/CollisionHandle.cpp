@@ -3,19 +3,19 @@
 //
 
 #include "CollisionHandle.h"
-#include <iostream>
 #include "Collision.h"
 #include "GameObject.h"
 #include "MoveComponent.h"
 #include <cmath>
+
+#include "Logger.h"
 
 class Collision;
 
 void CollisionHandle::handleCollision(const CollisionEvent& event) {
     size_t hash_code = typeid(*event.b->getComponent<Collision>()).hash_code();
     if (this->collisionHandlers.find(hash_code) == this->collisionHandlers.end()) {
-        std::cout << "error: no match collision handler for " << typeid(*event.b->getComponent<Collision>()).name() <<
-            std::endl;
+        LOG_ERROR_FMT("error: no match collision handler for {}", typeid(*event.b->getComponent<Collision>()).name());
         return;
     }
     this->collisionHandlers[hash_code](event);

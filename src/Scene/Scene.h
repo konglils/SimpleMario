@@ -104,23 +104,23 @@ public:
     }
 
     std::shared_ptr<GameObject> findGameObjectById(const unsigned int id) {
-        if (game_objects_map.find(id) == game_objects_map.end()) {
-            std::cerr << "Scene::findGameObjectById : GameObject with ID " << id << " are not found" << std::endl;
+        if (!game_objects_map.contains(id)) {
+            LOG_ERROR_FMT("GameObject with ID {} are not found", id);
             return nullptr;
         }
         return game_objects_map[id];
     }
 
     void removeObjectById(const unsigned int id) {
-        if (game_objects_map.find(id) == game_objects_map.end()) {
-            std::cerr << "Scene::removeObjectById : GameObject with id " << id << " are not found" << std::endl;
+        if (!game_objects_map.contains(id)) {
+            LOG_ERROR_FMT("GameObject with ID {} are not found", id);
             return;
         }
         game_objects_map.erase(id);
         for (auto it = game_objects.begin(); it != game_objects.end(); ++it) {
             if ((*it)->getId() == id) {
                 game_objects.erase(it);
-                std::cout << "Scene::removeObjectById : Removing GameObject with id " << id << std::endl;
+                LOG_DEBUG_FMT("Removing GameObject with id {}", id);
                 break;
             }
         }

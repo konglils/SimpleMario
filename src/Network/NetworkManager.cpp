@@ -5,7 +5,9 @@
 #include "NetworkManager.h"
 
 #include <iomanip>
+#include <ranges>
 
+#include "Logger.h"
 #include "SceneContext.h"
 #include "SceneManager.h"
 #include "NetworkProtocol.h"
@@ -13,39 +15,39 @@
 bool NetworkManager::startServer() {
     if (network_type == NetworkType::Server) return true;
     if (network_type == NetworkType::Client) {
-        std::cout << "Cannot start server while already running as a client!" << std::endl;
+        LOG_INFO("Cannot start server while already running as a client!");
         return false;
     }
-    std::cout << "Starting server on port " << port << "..." << std::endl;
+    LOG_INFO_FMT("Starting server on port {} ...", port);
 
     if (listener.listen(port) != sf::Socket::Done) {
-        std::cout << "Failed to start server" << std::endl;
+        LOG_INFO("Failed to start server");
         return false;
     }
 
     listener.setBlocking(false);
     network_type = NetworkType::Server;
-    std::cout << "Server started successfully!" << std::endl;
+    LOG_INFO("Server started successfully!");
     return true;
 }
 
 bool NetworkManager::connectToServer(const std::string& address) {
     if (network_type == NetworkType::Client) return true;
     if (network_type == NetworkType::Server) {
-        std::cout << "Cannot connect to server while already running as a server!" << std::endl;
+        LOG_INFO("Cannot connect to server while already running as a server!");
         return false;
     }
-    std::cout << "Connecting to " << address << ":" << port << "..." << std::endl;
+    LOG_INFO_FMT("Connecting to server at {}:{}", address, port);
 
     if (clientSocket.connect(address, port,
                              sf::seconds(CONFIG.network.timeout)) != sf::Socket::Done) {
-        std::cout << "Failed to connect to server!" << std::endl;
+        LOG_WARN("Failed to connect to server!");
         return false;
     }
 
     clientSocket.setBlocking(false);
     network_type = NetworkType::Client;
-    std::cout << "Connected to server successfully!" << std::endl;
+    LOG_INFO("Connected to server successfully!");
     return true;
 }
 
@@ -146,12 +148,7 @@ void NetworkManager::receiveNewConnection() {
 
         clients.emplace_back(newClient);
 
-        // 获取当前时间
-        const std::time_t now = std::time(nullptr);
-        const std::tm* local_tm = std::localtime(&now);
-
-        std::cout << '[' << std::put_time(local_tm, "%Y-%m-%d %H:%M:%S") << "] New client connected! ";
-        std::cout << "Total number of players: " << clients.size() + 1u << std::endl;
+        LOG_INFO_FMT("New client connected! Total number of players: {}", clients.size() + 1u);
     }
 }
 
@@ -177,14 +174,14 @@ void NetworkManager::serverUpdate(const sf::Time& deltaTime) {
             // 失效了也需要移除
             players.erase(client.get());
             it = clients.erase(it);
-            std::cerr << "NetworkManager::serverUpdate: client game object is unexpectedly released" << std::endl;
+            LOG_ERROR("client game object is unexpectedly released");
             continue;
         }
         // 处理玩家的输入操作
         while (status == sf::Socket::Done) {
             const auto player = players[client.get()].lock();
             if (!player) {
-                std::cerr << "NetworkManager::serverUpdate: client game object is unexpectedly released" << std::endl;
+                LOG_ERROR("client game object is unexpectedly released");
                 break;
             }
             player->deserialize(packet);
@@ -193,16 +190,13 @@ void NetworkManager::serverUpdate(const sf::Time& deltaTime) {
         ++it;
     }
     // 在 game_objects 中删除已销毁的对象
-    game_objects.erase(
-        std::remove_if(game_objects.begin(), game_objects.end(), [](const auto& obj) -> bool {
-            return obj.expired();
-        }),
-        game_objects.end()
-    );
+    std::erase_if(game_objects, [](const auto& obj) -> bool {
+        return obj.expired();
+    });
 
     // 通知所有在线玩家删除不在线的玩家
     for (const auto& client : clients) {
-        for (const auto& [id, remove] : removeIdsMap) {
+        for (const auto& id : removeIdsMap | std::views::keys) {
             sf::Packet packet;
             packet << NetworkMsg::RemoveObject << id;
             client->send(packet);
@@ -230,7 +224,7 @@ void NetworkManager::clientUpdate(const sf::Time& deltaTime) {
     sf::Socket::Status status = clientSocket.receive(packet);
     if (status == sf::Socket::Error || status == sf::Socket::Disconnected) {
         network_type = NetworkType::None;
-        std::cout << "NetworkManager::clientUpdate: Server disconnected" << std::endl;
+        LOG_INFO("Server disconnected");
         return;
     }
     while (status == sf::Socket::Done) {
@@ -247,8 +241,8 @@ void NetworkManager::clientUpdate(const sf::Time& deltaTime) {
                 SceneContext::getInstance().getSceneManager()->
                                             getCurrentScene()->findGameObjectById(id));
             if (!obj) {
-                std::cerr << "NetworkManager::clientUpdate: Objects with ID " << id << " are not found" << std::endl;
-                // packet.clear();
+                LOG_ERROR_FMT("Objects with ID {} are not found", id);
+                packet.clear();
                 continue;
             }
             obj->deserialize(packet);

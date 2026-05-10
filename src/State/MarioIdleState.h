@@ -57,11 +57,11 @@ public:
     void render(sf::RenderWindow* window) override {
         if (getIsLeft()) {
             if (owner) left_sprite.setPosition(owner->getPosition());
-            else std::cout << "MarioRunState: owner is nullptr" << std::endl;
+            else LOG_ERROR("Owner is nullptr");
             window->draw(left_sprite);
         } else {
             if (owner) right_sprite.setPosition(owner->getPosition());
-            else std::cout << "MarioRunState: owner is nullptr" << std::endl;
+            else LOG_ERROR("Owner is nullptr");
             window->draw(right_sprite);
         }
     }

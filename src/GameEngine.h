@@ -11,6 +11,7 @@
 #include "MenuScene.h"
 #include "SceneManager.h"
 #include "SuperMarioScene.h"
+#include "Logger.h"
 
 
 class GameEngine {
@@ -21,15 +22,20 @@ public:
     }
 
     void init() {
+        Logger::getInstance().setLogFile("log.txt");
+        Logger::getInstance().setLogLevel(LogLevel::Debug); // 只显示 Debug 及以上级别
+
+        LOG_INFO("GAME START!");
+
         if (!CONFIG.load()) {
-            std::cerr << "Using default config" << std::endl;
+            LOG_WARN("Config file load fail, using default config");
         }
         // 加载 SuperMarioScene 的资源
-        std::cout << "Loading SuperMarioScene resources..." << std::endl;
+        LOG_INFO("Loading SuperMarioScene resources...");
         AssetManager::getInstance().loadTexture(CONFIG.getTexturePath("superMario").c_str());
         AssetManager::getInstance().loadSoundBuffer(CONFIG.getSoundPath("superMario").c_str());
         FrameManager::getInstance().loadFrame();
-        std::cout << "SuperMarioScene resources loaded." << std::endl;
+        LOG_INFO("SuperMarioScene resources loaded.");
 
         if (!window) window = new sf::RenderWindow(
             sf::VideoMode(CONFIG.window.width, CONFIG.window.height), CONFIG.window.title);

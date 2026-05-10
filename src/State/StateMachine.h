@@ -4,7 +4,6 @@
 
 #pragma once
 #include <unordered_map>
-#include <iostream>
 #include "BaseState.h"
 
 class StateMachine : public Component {
@@ -40,8 +39,8 @@ public:
     }
 
     void setState(const std::string& stateName) {
-        if (states.find(stateName) == states.end()) {
-            std::cout << "StateMachine: state " << stateName << " does not exist!" << std::endl;
+        if (!states.contains(stateName)) {
+            LOG_INFO_FMT("State {} does not exist!", stateName);
             return;
         }
         if (currentState) {

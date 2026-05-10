@@ -8,8 +8,8 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
-#include <iostream>
 #include "Collision.h"
+#include "Logger.h"
 
 class GameObject {
     friend class MoveComponent;
@@ -104,23 +104,23 @@ public:
         if (components.find(typeid(T).hash_code()) != components.end()) {
             return std::static_pointer_cast<T>(components[typeid(T).hash_code()]);
         }
-        std::cout << this->tag << ": Component not found: " << typeid(T).name() << std::endl;
+        LOG_INFO_FMT("{} : Component not found: {}", this->tag, typeid(T).name());
         return nullptr;
     }
 
     template <typename IT, typename T>
     std::shared_ptr<T> getComponent() {
-        if (components.find(typeid(IT).hash_code()) != components.end()) {
+        if (components.contains(typeid(IT).hash_code())) {
             return std::static_pointer_cast<T>(components[typeid(IT).hash_code()]);
         }
-        std::cout << this->tag << " : Component not found: " << typeid(IT).name() << std::endl;
+        LOG_INFO_FMT("{} : Component not found: {}", this->tag, typeid(IT).name());
         return nullptr;
     }
 
     template <typename T>
     bool removeComponent() {
         if (const size_t componentId = typeid(T).hash_code();
-            components.find(componentId) != components.end()) {
+            components.contains(componentId)) {
             components.erase(componentId);
             for (int i = 0; i < components_vector.size(); i++) {
                 if (components_vector[i] == componentId) {

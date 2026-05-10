@@ -10,6 +10,7 @@
 #include "Collision.h"
 #include "FireBall.h"
 #include "EventBus.h"
+#include "Logger.h"
 #include "NetworkGameObject.h"
 
 
@@ -19,7 +20,7 @@ public:
 
     ~Mario() override {
         EventBus::getInstance().removeSubscribe("onCollision" + this->tag);
-        std::cout << this->getTag() << " Mario Destroyed" << std::endl;
+        LOG_DEBUG_FMT("The object tagged {} is destroyed", this->getTag());
     }
 
     void start() override;

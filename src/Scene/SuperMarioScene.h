@@ -72,8 +72,7 @@ public:
 
     void initStaticObjects() {
         // 左墙
-        std::shared_ptr<Ground> wall1 = std::make_shared<Ground>(0, 0, 10,
-                                                                 ConfigManager::getInstance().window.height, "wall1");
+        std::shared_ptr<Ground> wall1 = std::make_shared<Ground>(0, 0, 10, CONFIG.window.height, "wall1");
         this->addObject(wall1);
 
         std::vector<std::pair<int, int>> bricks = {

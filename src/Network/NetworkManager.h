@@ -44,7 +44,7 @@ public:
 
 private:
     NetworkType network_type = NetworkType::None;
-    unsigned int port = ConfigManager::getInstance().network.port;
+    unsigned int port = CONFIG.network.port;
     sf::TcpSocket clientSocket;
     sf::TcpListener listener;
     std::vector<std::shared_ptr<sf::TcpSocket>> clients;

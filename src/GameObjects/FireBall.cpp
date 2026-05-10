@@ -21,14 +21,14 @@ FireBall::FireBall(const unsigned int owner_id, const float x, const float y, co
     this->addComponent<Collision, BoxCollision, true>();
     this->addComponent<GravityComponent>();
 
-    this->addComponent<MoveComponent>()->setSpeed(sf::Vector2f(speed_x, -400.f));
+    this->addComponent<MoveComponent>()->setSpeed(sf::Vector2f(speed_x, CONFIG.game.fireballSpeedY));
 
     this->tag = "fireball:" + std::to_string(this->id);
     className = "FireBall";
 }
 
 FireBall::~FireBall() {
-    std::cout << this->getTag() << " FireBall destroyed" << std::endl;
+    // std::cout << this->getTag() << " FireBall destroyed" << std::endl;
     EventBus::getInstance().removeSubscribe("onCollision" + this->tag);
 }
 
@@ -64,7 +64,8 @@ void FireBall::setExploded() {
     is_exploded = true;
     this->getComponent<GravityComponent>()->setActive(false);
     this->getComponent<MoveComponent>()->setActive(false);
-    this->getComponent<MoveComponent>()->addPosition(sf::Vector2f(-16.f, -16.f), false);
+    const float offset = CONFIG.game.defaultBlockSize / 4;
+    this->getComponent<MoveComponent>()->addPosition(sf::Vector2f(-offset, -offset), false);
 }
 
 void FireBall::handleCollision(const CollisionEvent& event) {
@@ -104,7 +105,7 @@ void FireBall::handleCollision(const CollisionEvent& event) {
             const float relativeSpeedY = event.b_speed.y - event.a_speed.y;
             moveComponent->setSpeedY(relativeSpeedY * 0.5f);
             if (relativeSpeedY < 0) {
-                moveComponent->setSpeedY(std::min(relativeSpeedY * 0.5f, -500.f));
+                moveComponent->setSpeedY(std::min(relativeSpeedY * 0.5f, CONFIG.game.fireballSpeedY));
             }
 
             // 计算火球顶部和底部与碰撞物体的距离，判断碰撞面并调整位置

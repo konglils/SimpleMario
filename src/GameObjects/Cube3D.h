@@ -12,7 +12,7 @@ public:
     Cube3D() {
         Model* p = ModelManager::getInstance().getModel("cube");
         if (p == nullptr) {
-            ModelManager::getInstance().loadModel(ConfigManager::getInstance().getModelPath("cube"), "cube");
+            ModelManager::getInstance().loadModel(CONFIG.getModelPath("cube"), "cube");
             this->model = ModelManager::getInstance().getModel("cube");
         } else {
             this->model = p;

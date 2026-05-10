@@ -21,7 +21,7 @@ void CircleCollision::update(const sf::Time& deltaTime) {
 }
 
 void CircleCollision::render(sf::RenderWindow *window) {
-    if (!ConfigManager::getInstance().game.debug) return;
+    if (!CONFIG.game.debug) return;
     sf::CircleShape shape(radius);
     shape.setPosition(this->getPos() - sf::Vector2f(radius, radius));
     // std::cout << shape.getPosition().x << " " << shape.getPosition().y << std::endl;

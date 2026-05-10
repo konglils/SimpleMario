@@ -21,19 +21,18 @@ public:
     }
 
     void init() {
-        auto& config = ConfigManager::getInstance();
-        if (!config.load()) {
+        if (!CONFIG.load()) {
             std::cerr << "Using default config" << std::endl;
         }
         // 加载 SuperMarioScene 的资源
         std::cout << "Loading SuperMarioScene resources..." << std::endl;
-        AssetManager::getInstance().loadTexture(config.getTexturePath("superMario").c_str());
-        AssetManager::getInstance().loadSoundBuffer(config.getSoundPath("superMario").c_str());
+        AssetManager::getInstance().loadTexture(CONFIG.getTexturePath("superMario").c_str());
+        AssetManager::getInstance().loadSoundBuffer(CONFIG.getSoundPath("superMario").c_str());
         FrameManager::getInstance().loadFrame();
         std::cout << "SuperMarioScene resources loaded." << std::endl;
 
         if (!window) window = new sf::RenderWindow(
-            sf::VideoMode(config.window.width, config.window.height), config.window.title);
+            sf::VideoMode(CONFIG.window.width, CONFIG.window.height), CONFIG.window.title);
         scene_manager = std::make_shared<SceneManager>();
         scene_manager->addScene<GameScene>(window);
         scene_manager->addScene<GameScene3D>(window);
@@ -43,7 +42,7 @@ public:
     }
 
     void start() const {
-        window->setFramerateLimit(ConfigManager::getInstance().window.fps);
+        window->setFramerateLimit(CONFIG.window.fps);
         sf::Clock clock;
         while (window->isOpen()) {
             const sf::Time deltaTime = clock.restart();
@@ -51,10 +50,11 @@ public:
             while (window->pollEvent(event)) {
                 if (event.type == sf::Event::Closed) {
                     window->close();
+                    break;
                 }
                 scene_manager->handleEvent(event);
             }
-
+            if (!window->isOpen()) break;
             scene_manager->update(deltaTime);
             window->clear();
             scene_manager->render(window);

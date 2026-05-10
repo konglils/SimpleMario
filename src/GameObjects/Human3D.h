@@ -12,7 +12,7 @@ public:
     Human3D() {
         Model* p = ModelManager::getInstance().getModel("human");
         if (p == nullptr) {
-            ModelManager::getInstance().loadModel(ConfigManager::getInstance().getModelPath("human"), "human");
+            ModelManager::getInstance().loadModel(CONFIG.getModelPath("human"), "human");
             this->model = ModelManager::getInstance().getModel("human");
         } else {
             this->model = p;

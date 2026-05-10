@@ -33,7 +33,7 @@ void BoxCollision::update(const sf::Time& deltaTime) {
 }
 
 void BoxCollision::render(sf::RenderWindow *window) {
-    if (!ConfigManager::getInstance().game.debug) return;
+    if (!CONFIG.game.debug) return;
     sf::RectangleShape rect(this->size);
     rect.setPosition(this->getCollisionPosition());
     rect.setFillColor(sf::Color::Transparent);

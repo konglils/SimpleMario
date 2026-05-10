@@ -112,11 +112,15 @@ public:
     }
 
     void removeObjectById(const unsigned int id) {
-        std::cout << "Scene::removeObjectById : Removing GameObject with id " << id << std::endl;
+        if (game_objects_map.find(id) == game_objects_map.end()) {
+            std::cerr << "Scene::removeObjectById : GameObject with id " << id << " are not found" << std::endl;
+            return;
+        }
         game_objects_map.erase(id);
         for (auto it = game_objects.begin(); it != game_objects.end(); ++it) {
             if ((*it)->getId() == id) {
                 game_objects.erase(it);
+                std::cout << "Scene::removeObjectById : Removing GameObject with id " << id << std::endl;
                 break;
             }
         }

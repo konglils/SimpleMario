@@ -42,7 +42,7 @@ sf::Texture& AssetManager::getTexture(const std::string& name) {
 
 const sf::Font& AssetManager::getFont() {
     if (!have_load_font) {
-        font.loadFromFile(ConfigManager::getInstance().assets.font);
+        font.loadFromFile(CONFIG.assets.font);
         have_load_font = true;
     }
     return font;

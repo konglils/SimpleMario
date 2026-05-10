@@ -59,7 +59,7 @@ void Mario::handleEvent(sf::Event& e) {
 void Mario::shoot() {
     if (!could_shoot) return;
     could_shoot = false;
-    shoot_timer.start(300);
+    shoot_timer.start(CONFIG.game.shootDelay);
     const auto current_scene = SceneContext::getInstance().getSceneManager()->getCurrentScene();
     // TODO: 先这样写，到时候看怎么改好
     if (current_scene->getNetworkType() == NetworkManager::NetworkType::Client) return;

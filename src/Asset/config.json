@@ -36,6 +36,9 @@
         "gravity": 3200.0,
         "playerSpeed": 500.0,
         "jumpForce": 900.0,
+        "fireballSpeedY": -400.0,
+        "defaultBlockSize": 64.0,
+        "shootDelay": 300,
         "debug": true
     }
 }

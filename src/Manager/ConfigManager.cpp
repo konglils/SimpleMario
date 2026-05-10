@@ -73,6 +73,9 @@ void ConfigManager::parseGame(const json& j) {
     game.playerSpeed = j.value("playerSpeed", game.playerSpeed);
     game.jumpForce = j.value("jumpForce", game.jumpForce);
     game.debug = j.value("debug", game.debug);
+    game.defaultBlockSize = j.value("defaultBlockSize", game.defaultBlockSize);
+    game.shootDelay = j.value("shootDelay", game.shootDelay);
+    game.fireballSpeedY = j.value("fireballSpeedY", game.fireballSpeedY);
 }
 
 

@@ -37,7 +37,7 @@ void MarioController::jump() const {
     }
     auto state = owner->getComponent<StateMachine>();
     if (state && state->getCurrentStateName() != "MarioJumpState")
-        moveComponent->setSpeedY(-ConfigManager::getInstance().game.jumpForce);
+        moveComponent->setSpeedY(-CONFIG.game.jumpForce);
 }
 
 void MarioController::runLeft() const {
@@ -45,7 +45,7 @@ void MarioController::runLeft() const {
     if (!moveComponent) {
         moveComponent = owner->addComponent<MoveComponent>();
     }
-    moveComponent->setSpeedX(-ConfigManager::getInstance().game.playerSpeed);
+    moveComponent->setSpeedX(-CONFIG.game.playerSpeed);
 }
 
 void MarioController::runRight() const {
@@ -53,7 +53,7 @@ void MarioController::runRight() const {
     if (!moveComponent) {
         moveComponent = owner->addComponent<MoveComponent>();
     }
-    moveComponent->setSpeedX(ConfigManager::getInstance().game.playerSpeed);
+    moveComponent->setSpeedX(CONFIG.game.playerSpeed);
 }
 
 void MarioController::stopRun() const {

@@ -38,7 +38,7 @@ bool NetworkManager::connectToServer(const std::string& address) {
     std::cout << "Connecting to " << address << ":" << port << "..." << std::endl;
 
     if (clientSocket.connect(address, port,
-                             sf::seconds(ConfigManager::getInstance().network.timeout)) != sf::Socket::Done) {
+                             sf::seconds(CONFIG.network.timeout)) != sf::Socket::Done) {
         std::cout << "Failed to connect to server!" << std::endl;
         return false;
     }
@@ -174,6 +174,9 @@ void NetworkManager::serverUpdate(const sf::Time& deltaTime) {
                 it = clients.erase(it);
                 continue;
             }
+            // 失效了也需要移除
+            players.erase(client.get());
+            it = clients.erase(it);
             std::cerr << "NetworkManager::serverUpdate: client game object is unexpectedly released" << std::endl;
             continue;
         }
@@ -208,7 +211,7 @@ void NetworkManager::serverUpdate(const sf::Time& deltaTime) {
 
     // 向客户端同步数据
     past_time += deltaTime.asMilliseconds();
-    if (past_time < ConfigManager::getInstance().network.tickRate) return;
+    if (past_time < CONFIG.network.tickRate) return;
     past_time = 0;
     for (const auto& client : clients) {
         for (const auto& obj : game_objects) {
@@ -245,6 +248,7 @@ void NetworkManager::clientUpdate(const sf::Time& deltaTime) {
                                             getCurrentScene()->findGameObjectById(id));
             if (!obj) {
                 std::cerr << "NetworkManager::clientUpdate: Objects with ID " << id << " are not found" << std::endl;
+                // packet.clear();
                 continue;
             }
             obj->deserialize(packet);
@@ -269,6 +273,7 @@ void NetworkManager::addGameObject(const std::shared_ptr<GameObject>& obj) {
     if (this->network_type == NetworkType::Server) {
         // 向所有客户端广播新对象
         for (const auto& client : clients) {
+            if (obj->getClassName() == "Mario") continue;
             sf::Packet spawn_packet;
             serializable_obj->serialize(spawn_packet, NetworkMsg::SpawnObject);
             client->send(spawn_packet);

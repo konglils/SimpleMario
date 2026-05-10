@@ -36,7 +36,6 @@ public:
     }
 
     void exit() override {
-        window->setSize(sf::Vector2u(ConfigManager::getInstance().window.width,
-            ConfigManager::getInstance().window.height));
+        window->setSize(sf::Vector2u(CONFIG.window.width, CONFIG.window.height));
     }
 };

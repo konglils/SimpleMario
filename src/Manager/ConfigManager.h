@@ -9,6 +9,8 @@
 #include <iostream>
 #include <nlohmann/json_fwd.hpp>
 
+#define CONFIG ConfigManager::getInstance()
+
 using json = nlohmann::json;
 
 class ConfigManager {
@@ -50,6 +52,9 @@ public:
         float gravity = 3200.0f;
         float playerSpeed = 200.0f;
         float jumpForce = 400.0f;
+        float fireballSpeedY = -400.0f;
+        float defaultBlockSize = 64.f;
+        int shootDelay = 300;
         bool debug = true;
     } game{};
 

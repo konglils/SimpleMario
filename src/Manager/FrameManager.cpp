@@ -1,7 +1,7 @@
 //
 // Created by MINEC on 2026/2/19.
 //
-
+#ifndef SERVER_BUILD
 #include "FrameManager.h"
 #include <nlohmann/json.hpp>
 
@@ -30,3 +30,4 @@ void FrameManager::loadFrameFromJson(const char* path) {
 
     file.close();
 }
+#endif

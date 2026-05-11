@@ -13,9 +13,11 @@
 class MarioRunState : public BaseState {
 public:
     explicit MarioRunState() : BaseState("MarioRunState") {
+#ifndef SERVER_BUILD
         animation_right.setFrames(FrameManager::getInstance().getFrame("right_small_normal"));
         animation_left.setFrames(FrameManager::getInstance().getFrame("left_small_normal"));
         jump_sound.setBuffer(AssetManager::getInstance().getSoundBuffer("small_jump"));
+#endif
     }
     ~MarioRunState() override = default;
 
@@ -32,9 +34,9 @@ public:
         } else if (speedX < 0.f) {
             setIsLeft(true);
         }
-
+#ifndef SERVER_BUILD
         this->getAnimation().update(deltaTime);
-
+#endif
         // sf::Sprite* sprite;
         // if (getIsLeft()) {
         //     sprite = &animation_left.getSprite();
@@ -61,16 +63,20 @@ public:
             } else if (event.key.code == sf::Keyboard::D) {
                 setIsLeft(false);
             } else if (event.key.code == sf::Keyboard::W) {
+#ifndef SERVER_BUILD
                 jump_sound.play();
+#endif
                 owner->getComponent<StateMachine>()->setState("MarioJumpState");
                 std::dynamic_pointer_cast<MarioJumpState>(owner->getComponent<StateMachine>()->getCurrentState())->setJumpTimer();
             }
         }
     }
+#ifndef SERVER_BUILD
     void render(sf::RenderWindow* window) override {
         if (owner) this->getAnimation().render(window, owner->getPosition());
         else LOG_ERROR("owner is nullptr");
     }
+#endif
 
     bool getIsLeft() const {
         return owner->getComponent<StateMachine>()->getIsLeft();
@@ -79,14 +85,16 @@ public:
     void setIsLeft(const bool value) const {
         owner->getComponent<StateMachine>()->setIsLeft(value);
     }
-
+#ifndef SERVER_BUILD
     Animation& getAnimation() {
         if (getIsLeft()) return animation_left;
         return animation_right;
     }
-
+#endif
 private:
+#ifndef SERVER_BUILD
     Animation animation_right;
     Animation animation_left;
     sf::Sound jump_sound;
+#endif
 };

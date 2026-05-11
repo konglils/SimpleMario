@@ -179,6 +179,10 @@ public:
 
     void handleComponents(sf::Event& e);
 
+    static void resetIdCounter() {
+        idCounter = 0;
+    }
+
 protected:
     virtual void setPosition(const float posX, const float posY) {
         position = sf::Vector2f(posX, posY);

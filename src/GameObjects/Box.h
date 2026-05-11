@@ -17,10 +17,13 @@ public:
     void update(sf::Time deltaTime) override;
 
     void setPosition(float posX, float posY) override;
-
+#ifndef SERVER_BUILD
     void render(sf::RenderWindow* window) override;
+#endif
 
 private:
+#ifndef SERVER_BUILD
     Animation animation;
+#endif
     float last_y;
 };

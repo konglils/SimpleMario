@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#ifndef SERVER_BUILD
 #include <string>
 #include <unordered_map>
 #include <Animation.h>
@@ -42,3 +43,4 @@ private:
     FrameManager() = default;
     std::unordered_map<std::string, std::vector<Animation::Frame>> frames{};
 };
+#endif

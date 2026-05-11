@@ -2,34 +2,46 @@
 // Created by MINEC on 2025/12/9.
 //
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <memory>
 
+#include <memory>
+#include "Logger.h"
 #include "ConfigManager.h"
+#include "SceneManager.h"
+#ifndef SERVER_BUILD
+#include <SFML/Graphics.hpp>
 #include "GameScene.h"
 #include "GameScene3D.h"
 #include "MenuScene.h"
-#include "SceneManager.h"
 #include "SuperMarioScene.h"
-#include "Logger.h"
+#else
+#include "SuperMarioServerScene.h"
+#endif
 
+class SuperMarioServerScene;
 
 class GameEngine {
 public:
     GameEngine() = default;
     ~GameEngine() {
+#ifndef SERVER_BUILD
         delete window;
+#endif
     }
 
     void init() {
         Logger::getInstance().setLogFile("log.txt");
         Logger::getInstance().setLogLevel(LogLevel::Debug); // 只显示 Debug 及以上级别
-
+#ifndef SERVER_BUILD
         LOG_INFO("GAME START!");
+#else
+        LOG_INFO("GAME SERVER START!");
+#endif
 
         if (!CONFIG.load()) {
             LOG_WARN("Config file load fail, using default config");
         }
+
+#ifndef SERVER_BUILD
         // 加载 SuperMarioScene 的资源
         LOG_INFO("Loading SuperMarioScene resources...");
         AssetManager::getInstance().loadTexture(CONFIG.getTexturePath("superMario").c_str());
@@ -39,14 +51,20 @@ public:
 
         if (!window) window = new sf::RenderWindow(
             sf::VideoMode(CONFIG.window.width, CONFIG.window.height), CONFIG.window.title);
+#endif
         scene_manager = std::make_shared<SceneManager>();
+#ifndef SERVER_BUILD
         scene_manager->addScene<GameScene>(window);
         scene_manager->addScene<GameScene3D>(window);
         scene_manager->addScene<SuperMarioScene>(window);
         scene_manager->addScene<MenuScene>(window);
         scene_manager->loadScene("MenuScene");
+#else
+        scene_manager->addScene<SuperMarioServerScene>();
+        scene_manager->loadScene("SuperMarioScene");
+#endif
     }
-
+#ifndef SERVER_BUILD
     void start() const {
         window->setFramerateLimit(CONFIG.window.fps);
         sf::Clock clock;
@@ -66,7 +84,25 @@ public:
             scene_manager->render(window);
             window->display();
         }
+
     }
+#else
+    [[noreturn]] void start() const {
+        sf::Clock clock;
+        const float targetFPS = CONFIG.window.fps;
+        const sf::Time frameTime = sf::seconds(1.0f / targetFPS);
+
+        while (true) {
+            const sf::Time deltaTime = clock.restart();
+            scene_manager->update(deltaTime);
+
+            // 计算帧时间并睡眠剩余时间
+            if (const sf::Time sleepTime = frameTime - clock.getElapsedTime(); sleepTime > sf::Time::Zero) {
+                sf::sleep(sleepTime);
+            }
+        }
+    }
+#endif
 
 private:
     std::shared_ptr<SceneManager> scene_manager;

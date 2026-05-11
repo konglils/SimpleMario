@@ -9,7 +9,6 @@
 #include <functional>
 #include <vector>
 #include <any>
-#include <SFML/Graphics.hpp>
 
 class EventBus {
 public:
@@ -27,10 +26,12 @@ public:
 
     template <typename T>
     void publish(const std::string& eventName, T data) {
-        if (listeners.find(eventName) != listeners.end()) {
+        if (listeners.contains(eventName)) {
             for (auto& listener : listeners[eventName]) {
                 listener(data);
             }
+        } else {
+            LOG_WARN_FMT("{} not found", eventName);
         }
     }
 

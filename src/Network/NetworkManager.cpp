@@ -21,7 +21,7 @@ bool NetworkManager::startServer() {
     LOG_INFO_FMT("Starting server on port {} ...", port);
 
     if (listener.listen(port) != sf::Socket::Done) {
-        LOG_INFO("Failed to start server");
+        LOG_WARN("Failed to start server");
         return false;
     }
 
@@ -34,7 +34,7 @@ bool NetworkManager::startServer() {
 bool NetworkManager::connectToServer(const std::string& address) {
     if (network_type == NetworkType::Client) return true;
     if (network_type == NetworkType::Server) {
-        LOG_INFO("Cannot connect to server while already running as a server!");
+        LOG_WARN("Cannot connect to server while already running as a server!");
         return false;
     }
     LOG_INFO_FMT("Connecting to server at {}:{}", address, port);
@@ -147,8 +147,11 @@ void NetworkManager::receiveNewConnection() {
         newClient->send(packet);
 
         clients.emplace_back(newClient);
-
+#ifndef SERVER_BUILD
         LOG_INFO_FMT("New client connected! Total number of players: {}", clients.size() + 1u);
+#else
+        LOG_INFO_FMT("New client connected! Total number of players: {}", clients.size());
+#endif
     }
 }
 
@@ -207,6 +210,7 @@ void NetworkManager::serverUpdate(const sf::Time& deltaTime) {
     past_time += deltaTime.asMilliseconds();
     if (past_time < CONFIG.network.tickRate) return;
     past_time = 0;
+    LOG_TRACE("Sending update packets to clients");
     for (const auto& client : clients) {
         for (const auto& obj : game_objects) {
             sf::Packet packet;
@@ -224,17 +228,19 @@ void NetworkManager::clientUpdate(const sf::Time& deltaTime) {
     sf::Socket::Status status = clientSocket.receive(packet);
     if (status == sf::Socket::Error || status == sf::Socket::Disconnected) {
         network_type = NetworkType::None;
-        LOG_INFO("Server disconnected");
+        LOG_WARN("Server disconnected");
         return;
     }
     while (status == sf::Socket::Done) {
         NetworkMsg type;
         packet >> type;
         if (type == NetworkMsg::SpawnObject || type == NetworkMsg::SpawnPlayer) {
+            LOG_TRACE("Received packet, type: SpawnObject or SpawnPlayer");
             players[&clientSocket] = std::dynamic_pointer_cast<ISerializable>(
                 SceneContext::getInstance().getSceneManager()->getCurrentScene()->spawnEntity(packet));
         }
         else if (type == NetworkMsg::UpdateObject) {
+            LOG_TRACE("Received packet, type: UpdateObject");
             unsigned int id;
             packet >> id;
             const std::shared_ptr<ISerializable>& obj = std::dynamic_pointer_cast<ISerializable>(
@@ -248,6 +254,7 @@ void NetworkManager::clientUpdate(const sf::Time& deltaTime) {
             obj->deserialize(packet);
         }
         else if (type == NetworkMsg::RemoveObject) {
+            LOG_TRACE("Received packet, type: RemoveObject");
             unsigned int id;
             packet >> id;
             SceneContext::getInstance().getSceneManager()->
@@ -255,6 +262,7 @@ void NetworkManager::clientUpdate(const sf::Time& deltaTime) {
             SceneContext::getInstance().getSceneManager()->getCurrentScene()->removeObjectById(id);
         }
         else if (type == NetworkMsg::SpawnFireBall) {
+            LOG_TRACE("Received packet, type: SpawnFireBall");
             SceneContext::getInstance().getSceneManager()->getCurrentScene()->spawnEntity(packet);
         }
         status = clientSocket.receive(packet);

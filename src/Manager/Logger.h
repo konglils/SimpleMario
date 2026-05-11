@@ -180,6 +180,7 @@ public:
         } else {
             std::cout << logMessage; // Trace/Debug 保持默认色
         }
+        std::cout.flush();
 
         // 6. 输出到文件 (千万不要带颜色代码，否则文件里全是乱码)
         if (logFile.is_open()) {

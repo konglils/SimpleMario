@@ -28,7 +28,7 @@
     },
     "network": {
         "serverIp": "127.0.0.1",
-        "port": 8888,
+        "port": 6666,
         "tickRate": 50,
         "timeout": 5.0
     },

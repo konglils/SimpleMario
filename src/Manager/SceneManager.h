@@ -12,17 +12,20 @@ class SceneManager {
 public:
     SceneManager() = default;
     ~SceneManager() = default;
+#ifndef SERVER_BUILD
     void handleEvent(sf::Event& event) const {
         currentScene->handleEvent(event);
     }
+#endif
 
     void update(sf::Time deltaTime) const {
         currentScene->update(deltaTime);
     }
-
+#ifndef SERVER_BUILD
     void render(sf::RenderWindow* window) const {
         currentScene->render(window);
     }
+#endif
 
     void loadScene(const std::string& scene_name) {
         if (!scenes.contains(scene_name)) {

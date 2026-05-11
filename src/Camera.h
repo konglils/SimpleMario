@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#ifndef SERVER_BUILD
 #include <SFML/Graphics.hpp>
 
 class Camera {
@@ -120,3 +121,4 @@ private:
         window->setView(view);
     }
 };
+#endif

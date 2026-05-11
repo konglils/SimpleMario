@@ -15,9 +15,9 @@ public:
     ~FireBall() override;
 
     void start() override;
-
+#ifndef SERVER_BUILD
     void render(sf::RenderWindow* window) override;
-
+#endif
     void update(sf::Time deltaTime) override;
 
     void setExploded();
@@ -30,7 +30,9 @@ public:
 
 private:
     bool is_exploded = false;
+#ifndef SERVER_BUILD
     Animation animation;
     Animation explosionAnimation;
+#endif
     unsigned int owner_id;
 };

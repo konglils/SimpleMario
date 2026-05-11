@@ -1,12 +1,21 @@
 cmake_minimum_required(VERSION 3.20)
-project(GameEngine LANGUAGES CXX)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(WIN_STATIC_LINK OFF)
+set(BUILD_FOR_SERVER OFF)
+
+if (BUILD_FOR_SERVER)
+    message("Build for Server")
+    project(GameEngineServer LANGUAGES CXX)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/server)
+else ()
+    message("Build for C/S")
+    project(GameEngine LANGUAGES CXX)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+endif ()
 
 # 设置 SFML 路径
 if (WIN32)
     set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
-    set(WIN_STATIC_LINK OFF)
 else ()
     set(SFML_ROOT "./lib/SFML-2.6.1-linux")
 endif ()
@@ -23,6 +32,9 @@ file(GLOB_RECURSE SRC CONFIGURE_DEPENDS ${SRC_DIR}/*.cpp)
 
 add_executable(${PROJECT_NAME} ${SRC})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+if (BUILD_FOR_SERVER)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE SERVER_BUILD)
+endif ()
 target_include_directories(
         ${PROJECT_NAME}
         PRIVATE
@@ -48,21 +60,20 @@ target_link_directories(
 
 if (WIN32)
     if (WIN_STATIC_LINK)
+        message("Static link")
         # Windows 下静态链接
-        target_link_libraries(
-                ${PROJECT_NAME}
-                PRIVATE
+        list(APPEND LINK_LIBRARIES
                 debug sfml-audio-s-d
                 debug sfml-graphics-s-d
                 debug sfml-window-s-d
-                debug sfml-system-s-d
                 debug sfml-network-s-d
+                debug sfml-system-s-d
 
                 optimized sfml-audio-s
                 optimized sfml-graphics-s
                 optimized sfml-window-s
-                optimized sfml-system-s
                 optimized sfml-network-s
+                optimized sfml-system-s
 
                 # OpenAL 音频库
                 openal32
@@ -79,35 +90,44 @@ if (WIN32)
                 ws2_32
         )
     else ()
-        target_link_libraries(
-                ${PROJECT_NAME}
-                PRIVATE
-                debug sfml-graphics-d
-                debug sfml-window-d
+        message("Dynamic link")
+        list(APPEND LINK_LIBRARIES
                 debug sfml-system-d
                 debug sfml-network-d
-                debug sfml-audio-d
-                optimized sfml-graphics
-                optimized sfml-window
                 optimized sfml-system
                 optimized sfml-network
-                optimized sfml-audio
         )
+        if (NOT BUILD_FOR_SERVER)
+            list(APPEND LINK_LIBRARIES
+                    debug sfml-graphics-d
+                    debug sfml-window-d
+                    debug sfml-audio-d
+                    optimized sfml-graphics
+                    optimized sfml-window
+                    optimized sfml-audio
+            )
+        endif ()
     endif ()
 else ()
-    target_link_libraries(
-            ${PROJECT_NAME}
-            PRIVATE
-            sfml-graphics
-            sfml-window
+    list(APPEND LINK_LIBRARIES
             sfml-system
-            sfml-audio
             sfml-network
     )
+    if (NOT BUILD_FOR_SERVER)
+        list(APPEND LINK_LIBRARIES
+                sfml-graphics
+                sfml-window
+                sfml-audio
+        )
+    endif ()
 endif ()
 
-add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${SRC_DIR}/Asset/
-        $<TARGET_FILE_DIR:GameEngine>/Asset
-)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LINK_LIBRARIES})
+
+if (NOT BUILD_FOR_SERVER)
+    add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${SRC_DIR}/Asset/
+            $<TARGET_FILE_DIR:GameEngine>/Asset
+    )
+endif ()

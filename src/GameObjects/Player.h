@@ -4,6 +4,7 @@
 
 
 #pragma once
+#ifndef SERVER_BUILD
 #include <SFML/Graphics.hpp>
 #include "GameObject.h"
 #include "EventBus.h"
@@ -40,4 +41,4 @@ private:
     sf::CircleShape shape;
 };
 
-
+#endif

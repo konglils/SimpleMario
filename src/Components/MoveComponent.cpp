@@ -13,14 +13,14 @@ void MoveComponent::update(const sf::Time& deltaTime) {
     owner->position += owner->speed * deltaTime.asSeconds();
     setPosition(owner->position.x, owner->position.y);
 }
-
+#ifndef SERVER_BUILD
 void MoveComponent::render(sf::RenderWindow* window) {
     if (!CONFIG.game.debug) return;
     if (owner->speed.x == 0.f && owner->speed.y == 0.f) return;
     const auto center = owner->getCenter();
     drawArrow(window, center.x, center.y, center.x + owner->speed.x / 10.f, center.y + owner->speed.y / 10.f);
 }
-
+#endif
 void MoveComponent::setPosition(const sf::Vector2f& pos, const bool move_collision) const {
     owner->setPosition(pos.x, pos.y);
     if (move_collision) setCollisionPosition(pos);
@@ -79,7 +79,7 @@ void MoveComponent::setSpeed(const float speedX, const float speedY) const {
 void MoveComponent::addSpeed(const sf::Vector2f& speed) const {
     owner->speed += speed;
 }
-
+#ifndef SERVER_BUILD
 void MoveComponent::drawArrow(sf::RenderWindow* window, const float x1, const float y1, const float x2, const float y2,
                               const float arrowSize, const sf::Color color) {
     // 绘制箭杆
@@ -107,7 +107,7 @@ void MoveComponent::drawArrow(sf::RenderWindow* window, const float x1, const fl
     };
     window->draw(arrowHead, 3, sf::Triangles);
 }
-
+#endif
 void MoveComponent::setCollisionPosition(const sf::Vector2f& pos) const {
     if (const auto& collision = owner->getComponent<Collision>()) {
         collision->setPosition(pos);

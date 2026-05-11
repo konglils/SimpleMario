@@ -23,8 +23,8 @@ public:
 
     // Window 配置
     struct WindowConfig {
-        int width = 1200;
-        int height = 960;
+        unsigned width = 1200;
+        unsigned height = 960;
         std::string title = "GameEngine";
         int fps = 165;
     } window{};
@@ -41,16 +41,16 @@ public:
     // Network 配置
     struct NetworkConfig {
         std::string serverIp = "127.0.0.1";
-        int port = 8888;
-        int tickRate = 20;
+        int port = 6666;
+        int tickRate = 50;
         float timeout = 5.0f;
     } network{};
 
     // Game 配置
     struct GameConfig {
         float gravity = 3200.0f;
-        float playerSpeed = 200.0f;
-        float jumpForce = 400.0f;
+        float playerSpeed = 500.0f;
+        float jumpForce = 900.0f;
         float fireballSpeedY = -400.0f;
         float defaultBlockSize = 64.f;
         int shootDelay = 300;

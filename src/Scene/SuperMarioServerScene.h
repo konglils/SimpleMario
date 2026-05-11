@@ -1,26 +1,21 @@
 //
-// Created by MINEC on 2026/1/29.
+// Created by MINEC on 2026/5/11.
 //
 
 #pragma once
-#include "Box.h"
-#include "BoxGameObject.h"
-#include "Brick.h"
-#include "Button.h"
-#include "Ground.h"
 #include "Scene.h"
-#include "CollisionSystem.h"
+#include <memory>
 #include "Mario.h"
-#include "NetworkManager.h"
-#include "SimpleNetwork.h"
+#include "CollisionSystem.h"
+#include "Ground.h"
+#include "Box.h"
+#include "Brick.h"
 
-
-class SuperMarioScene : public Scene {
+class SuperMarioServerScene : public Scene {
 public:
-    explicit SuperMarioScene(sf::RenderWindow* _window) : Scene(_window, "SuperMarioScene") {
-    }
+    explicit SuperMarioServerScene() : Scene("SuperMarioScene") { }
 
-    ~SuperMarioScene() override = default;
+    ~SuperMarioServerScene() override = default;
 
     void init() override {
         Scene::init();
@@ -28,10 +23,9 @@ public:
         is_init = true;
         collisionSystem = std::make_unique<CollisionSystem>();
 
-        bg.setTexture(AssetManager::getInstance().getTexture("level_1"));
-        const float bg_scale = static_cast<float>(window->getSize().y) / bg.getLocalBounds().height;
-        bg.setScale(bg_scale, bg_scale);
         initStaticObjects();
+
+        startServer();
     }
 
     std::shared_ptr<GameObject> spawnEntity() override {
@@ -106,17 +100,12 @@ public:
     void initDynamicObjects() {
         if (is_initDynamicObjects) return;
         is_initDynamicObjects = true;
-        std::shared_ptr<Mario> mario = std::make_shared<Mario>(100.f, 100.f);
-        this->addObjectWithNetwork(mario);
-        LOG_DEBUG("Create mario");
-    }
-
-    void render(sf::RenderWindow* _window) override {
-        _window->draw(bg);
-        Scene::render(_window);
+        // std::shared_ptr<Mario> mario = std::make_shared<Mario>(100.f, 100.f);
+        // this->addObjectWithNetwork(mario);
     }
 
     void update(sf::Time deltaTime) override {
+        LOG_TRACE_FMT("deltaTime: {} ms", deltaTime.asMilliseconds());
         Scene::update(deltaTime);
         if (this->collisionSystem) {
             this->collisionSystem->checkCollisions();
@@ -143,19 +132,6 @@ public:
         simple_network.addGameObject(obj);
     }
 
-    void handleEvent(sf::Event& event) override {
-        simple_network.handleEvent(event);
-        Scene::handleEvent(event);
-        if (event.type == sf::Event::MouseButtonPressed) {
-            const sf::Vector2i pos = SceneContext::getInstance().getMousePosition();
-            LOG_TRACE_FMT("Mouse clicked at ({}, {})", pos.x, pos.y);
-        } else if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Escape) {
-                SceneContext::getInstance().getSceneManager()->loadScene("MenuScene");
-            }
-        }
-    }
-
     CollisionSystem* getCollisionSystem() const override {
         return collisionSystem.get();
     }
@@ -177,6 +153,9 @@ public:
 private:
     std::unique_ptr<CollisionSystem> collisionSystem;
     NetworkManager simple_network;
+#ifndef SERVER_BUILD
     sf::Sprite bg;
+#endif
     bool is_initDynamicObjects = false;
 };
+

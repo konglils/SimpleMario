@@ -13,6 +13,7 @@
 class MarioIdleState : public BaseState {
 public:
     explicit MarioIdleState() : BaseState("MarioIdleState") {
+#ifndef SERVER_BUILD
         const sf::Texture& mario_texture = AssetManager::getInstance().getTexture("mario_bros");
         right_sprite.setTexture(mario_texture);
         right_sprite.setTextureRect(sf::IntRect(178, 32, 12, 16));
@@ -22,13 +23,20 @@ public:
         left_sprite.setScale(-4.f, 4.f);
         left_sprite.setOrigin(static_cast<float>(right_sprite.getTextureRect().width), 0.f);
         jump_sound.setBuffer(AssetManager::getInstance().getSoundBuffer("small_jump"));
+#endif
     }
     ~MarioIdleState() override = default;
 
     void start() override {
         const auto box_collision = owner->getComponent<Collision, BoxCollision>();
+#ifndef SERVER_BUILD
         const float w = left_sprite.getGlobalBounds().width;
         const float h = left_sprite.getGlobalBounds().height;
+        LOG_TRACE_FMT("MarioIdle sprite width:{}, height:{}", w, h);
+#else
+        const float w = 48.f;
+        const float h = 64.f;
+#endif
         box_collision->setSize(w, h);
         owner->setSize(w, h);
         box_collision->setOffset(sf::Vector2f(0.f, 0.f));
@@ -47,13 +55,15 @@ public:
             } else if (event.key.code == sf::Keyboard::D) {
                 setIsLeft(false);
             } else if (event.key.code == sf::Keyboard::W) {
+#ifndef SERVER_BUILD
                 jump_sound.play();
+#endif
                 owner->getComponent<StateMachine>()->setState("MarioJumpState");
                 std::dynamic_pointer_cast<MarioJumpState>(owner->getComponent<StateMachine>()->getCurrentState())->setJumpTimer();
             }
         }
     }
-
+#ifndef SERVER_BUILD
     void render(sf::RenderWindow* window) override {
         if (getIsLeft()) {
             if (owner) left_sprite.setPosition(owner->getPosition());
@@ -65,7 +75,7 @@ public:
             window->draw(right_sprite);
         }
     }
-
+#endif
     bool getIsLeft() const {
         return owner->getComponent<StateMachine>()->getIsLeft();
     }
@@ -75,7 +85,9 @@ public:
     }
 
 private:
+#ifndef SERVER_BUILD
     sf::Sprite left_sprite;
     sf::Sprite right_sprite;
     sf::Sound jump_sound;
+#endif
 };

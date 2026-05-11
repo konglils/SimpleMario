@@ -21,8 +21,9 @@ Mario::Mario(const float x, const float y, const bool isPlayer) {
     this->addComponent<Collision, BoxCollision, true>();
     // this->addComponent<CollisionHandle, BoxCollisionHandle>();
     this->addComponent<GravityComponent>();
+#ifndef SERVER_BUILD
     if (isPlayer) this->addComponent<MarioCameraComponent>();
-
+#endif
     const auto stateMachine = this->addComponent<StateMachine>();
     stateMachine->addState<MarioRunState>();
     stateMachine->addState<MarioIdleState>();

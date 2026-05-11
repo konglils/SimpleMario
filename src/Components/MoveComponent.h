@@ -10,9 +10,9 @@ class MoveComponent : public Component {
 public:
     MoveComponent() = default;
     void update(const sf::Time& deltaTime) override;
-
+#ifndef SERVER_BUILD
     void render(sf::RenderWindow* window) override;
-
+#endif
     void setPosition(const sf::Vector2f& pos, bool move_collision = true) const;
 
     void moveCollisionTo(const sf::Vector2f& pos) const;
@@ -38,10 +38,10 @@ public:
     void setSpeed(float speedX, float speedY) const;
 
     void addSpeed(const sf::Vector2f& speed) const;
-
+#ifndef SERVER_BUILD
     static void drawArrow(sf::RenderWindow* window, float x1, float y1, float x2, float y2,
                           float arrowSize = 10.0f, sf::Color color = sf::Color::Red);
-
+#endif
 private:
     void setCollisionPosition(const sf::Vector2f& pos) const;
 };

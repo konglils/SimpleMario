@@ -3,7 +3,9 @@
 //
 
 #pragma once
+#ifndef SERVER_BUILD
 #include "AssetManager.h"
+#endif
 #include "BaseState.h"
 #include "BoxCollision.h"
 #include "Collision.h"
@@ -16,6 +18,7 @@
 class MarioJumpState : public BaseState {
 public:
     MarioJumpState() : BaseState("MarioJumpState") {
+#ifndef SERVER_BUILD
         const sf::Texture& mario_texture = AssetManager::getInstance().getTexture("mario_bros");
         right_sprite.setTexture(mario_texture);
         right_sprite.setTextureRect(sf::IntRect(144, 32, 16, 16));
@@ -24,6 +27,7 @@ public:
         left_sprite.setTextureRect(sf::IntRect(144, 32, 16, 16));
         left_sprite.setScale(-4.f, 4.f);
         left_sprite.setOrigin(static_cast<float>(right_sprite.getTextureRect().width), 0.f);
+#endif
     }
     ~MarioJumpState() override = default;
 
@@ -53,7 +57,7 @@ public:
             move_component->addSpeed(sf::Vector2f(0.f, -1815.f * deltaTime.asSeconds()));
         }
     }
-
+#ifndef SERVER_BUILD
     void handleEvent(const sf::Event& event) override {
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::A) {
@@ -79,7 +83,7 @@ public:
             window->draw(right_sprite);
         }
     }
-
+#endif
     bool getIsLeft() const {
         return owner->getComponent<StateMachine>()->getIsLeft();
     }
@@ -93,8 +97,10 @@ public:
     }
 
 private:
+#ifndef SERVER_BUILD
     sf::Sprite left_sprite;
     sf::Sprite right_sprite;
+#endif
     bool w_is_pressed = false;
     Timer jump_timer;
 };

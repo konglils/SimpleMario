@@ -19,7 +19,7 @@ void CircleCollision::update(const sf::Time& deltaTime) {
     // this->posY = owner->posY + owner->height / 2;
     // this->position = owner->getPosition() + owner->getSize() * 0.5f;
 }
-
+#ifndef SERVER_BUILD
 void CircleCollision::render(sf::RenderWindow *window) {
     if (!CONFIG.game.debug) return;
     sf::CircleShape shape(radius);
@@ -30,6 +30,7 @@ void CircleCollision::render(sf::RenderWindow *window) {
     shape.setOutlineThickness(2);
     window->draw(shape);
 }
+#endif
 
 void CircleCollision::setPosition(const sf::Vector2f &position) {
     this->position = owner->getPosition() + owner->getSize() * 0.5f;

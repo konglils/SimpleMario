@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#ifndef SERVER_BUILD
 #include "GameObject.h"
 #include <SFML/Graphics.hpp>
 
@@ -37,5 +38,5 @@ private:
 
     sf::CircleShape shape;
 };
-
+#endif
 

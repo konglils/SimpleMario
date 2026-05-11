@@ -12,7 +12,9 @@ public:
     CircleCollision(float x, float y, float radius);
     // void start() override {}
     void update(const sf::Time& deltaTime) override;
+#ifndef SERVER_BUILD
     void render(sf::RenderWindow* window) override;
+#endif
     void setPosition(const sf::Vector2f& position) override;
     [[nodiscard]] bool checkCollision(const Collision& other) const override;
     [[nodiscard]] bool checkCollisionWithBox(const BoxCollision& other) const override;

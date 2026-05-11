@@ -1,6 +1,7 @@
 //
 // Created by MINEC on 2026/5/8.
 //
+#ifndef SERVER_BUILD
 
 #include "Button.h"
 #include "AssetManager.h"
@@ -46,3 +47,5 @@ bool Button::isMouseOver() const {
     const auto mouse_pos = SceneContext::getInstance().getMousePosition();
     return buttonBounds.contains(static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y));
 }
+
+#endif

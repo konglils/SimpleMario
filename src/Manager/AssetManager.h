@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#ifndef SERVER_BUILD
 #include <filesystem>
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
@@ -41,3 +42,4 @@ private:
     sf::Font font{};
     bool have_load_font = false;
 };
+#endif

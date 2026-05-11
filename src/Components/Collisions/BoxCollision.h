@@ -13,7 +13,9 @@ public:
     BoxCollision();
     void start() override;
     void update(const sf::Time& deltaTime) override;
+#ifndef SERVER_BUILD
     void render(sf::RenderWindow* window) override;
+#endif
 
     [[nodiscard]] bool checkCollision(const Collision& other) const override;
 

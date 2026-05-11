@@ -1,7 +1,7 @@
 //
 // Created by MINEC on 2026/5/8.
 //
-
+#ifndef SERVER_BUILD
 #include "AssetManager.h"
 
 #include "Logger.h"
@@ -85,3 +85,4 @@ sf::SoundBuffer& AssetManager::getSoundBuffer(const std::string& name) {
     }
     return soundBuffers[name];
 }
+#endif

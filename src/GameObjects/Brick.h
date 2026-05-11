@@ -13,14 +13,22 @@ public:
             : BoxGameObject(x, y, 0, 0) {
         this->tag = tag + ":" + std::to_string(id);
         this->moveAble = false;
-
+#ifndef SERVER_BUILD
         sprite.setTexture(AssetManager::getInstance().getTexture("tile_set"));
         sprite.setTextureRect(sf::IntRect(16, 0, 16, 16));
         sprite.setScale(4.f, 4.f);
         sprite.setPosition(this->getPosition());
 
         this->setSize(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height);
+#else
+        this->setSize(CONFIG.game.defaultBlockSize, CONFIG.game.defaultBlockSize);
+#endif
+
+#ifndef SERVER_BUILD
         this->getComponent<Collision, BoxCollision>()->setSize(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height);
+#else
+        this->getComponent<Collision, BoxCollision>()->setSize(CONFIG.game.defaultBlockSize, CONFIG.game.defaultBlockSize);
+#endif
         className = "Brick";
     }
 
@@ -29,12 +37,14 @@ public:
         const auto boxCollision = this->getComponent<Collision, BoxCollision>();
         boxCollision->setPosition(posX, posY);
     }
-
+#ifndef SERVER_BUILD
     void render(sf::RenderWindow* window) override {
         BoxGameObject::render(window);
         window->draw(sprite);
     }
-
+#endif
 private:
+#ifndef SERVER_BUILD
     sf::Sprite sprite;
+#endif
 };

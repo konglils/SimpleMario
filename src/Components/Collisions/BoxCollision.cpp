@@ -30,7 +30,7 @@ void BoxCollision::update(const sf::Time& deltaTime) {
     // this->posY = owner->posY;
     // this->position = owner->getPosition();
 }
-
+#ifndef SERVER_BUILD
 void BoxCollision::render(sf::RenderWindow *window) {
     if (!CONFIG.game.debug) return;
     sf::RectangleShape rect(this->size);
@@ -40,7 +40,7 @@ void BoxCollision::render(sf::RenderWindow *window) {
     rect.setOutlineThickness(2);
     window->draw(rect);
 }
-
+#endif
 bool BoxCollision::checkCollision(const Collision &other) const {
     return other.checkCollisionWithBox(*this);
 }
@@ -89,4 +89,3 @@ void BoxCollision::setPosition(const float x, const float y) {
 void BoxCollision::setSize(const float width_, const float height_) {
     this->size = sf::Vector2f(width_, height_);
 }
-

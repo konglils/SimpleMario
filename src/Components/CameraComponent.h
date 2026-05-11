@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#ifndef SERVER_BUILD
 #include "Component.h"
 #include "SceneContext.h"
 #include "Camera.h"
@@ -17,3 +18,4 @@ public:
         }
     }
 };
+#endif

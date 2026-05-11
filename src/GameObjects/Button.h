@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#ifndef SERVER_BUILD
 #include <functional>
 
 #include "GameObject.h"
@@ -35,3 +36,4 @@ private:
     sf::Text text;
     bool is_hover = false;
 };
+#endif

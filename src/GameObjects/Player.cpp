@@ -1,7 +1,7 @@
 //
 // Created by MINEC on 2026/5/8.
 //
-
+#ifndef SERVER_BUILD
 #include "Player.h"
 
 #include "CircleCollisionHandle.h"
@@ -41,3 +41,4 @@ void Player::start() {
         }
     );
 }
+#endif

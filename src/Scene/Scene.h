@@ -16,14 +16,22 @@ class CollisionSystem;
 class SceneManager;
 class Scene {
 public:
+#ifndef SERVER_BUILD
     explicit Scene(sf::RenderWindow* _window) : window(_window), scene_name("Scene") {}
     explicit Scene(sf::RenderWindow* _window, std::string _name) : window(_window), scene_name(std::move(_name)) {}
+#else
+    explicit Scene() : scene_name("Scene") {}
+    explicit Scene(std::string _name) : scene_name(std::move(_name)) {}
+#endif
     virtual ~Scene() = default;
 
     // 场景初始化方法
     virtual void init() {
+#ifndef SERVER_BUILD
         this->setCamera(window);
+#endif
         this->setSceneContext();
+        GameObject::resetIdCounter();
     }
 
     virtual void exit() {
@@ -41,12 +49,9 @@ public:
     // 场景更新方法
     virtual void update(sf::Time deltaTime) {
         // 删除已销毁的 GameObject
-        game_objects.erase(
-            std::remove_if(game_objects.begin(), game_objects.end(), [](const auto& obj) {
-                return obj->isDestroy();
-            }),
-            game_objects.end()
-        );
+        std::erase_if(game_objects, [](const auto& obj) {
+            return obj->isDestroy();
+        });
         for (auto it = game_objects_map.begin(); it != game_objects_map.end(); ) {
             if (it->second->isDestroy()) {
                 it = game_objects_map.erase(it);
@@ -64,6 +69,7 @@ public:
     }
 
     // 场景渲染方法
+#ifndef SERVER_BUILD
     virtual void render(sf::RenderWindow* _window) {
         for (const auto& obj : game_objects) {
             if (obj->isActive()) {
@@ -84,6 +90,7 @@ public:
             camera->resize();
         }
     }
+#endif
 
     // 游戏对象管理
     std::vector<std::shared_ptr<GameObject>>& getGameObjects() {
@@ -125,7 +132,7 @@ public:
             }
         }
     }
-
+#ifndef SERVER_BUILD
     // 相机管理
     void setCamera(sf::RenderWindow* _window) {
         camera = std::make_unique<Camera>(_window);
@@ -134,18 +141,26 @@ public:
     [[nodiscard]] Camera* getCamera() const {
         return camera.get();
     }
-
+#endif
     // 场景大小和上下文管理
     void setSceneContext() const {
+#ifndef SERVER_BUILD
         if (window) SceneContext::getInstance().setWindow(window);
         if (camera) SceneContext::getInstance().setCamera(camera.get());
+#endif
         SceneContext::getInstance().setGameObjects(&game_objects);
         SceneContext::getInstance().setSceneManager(scene_manager);
     }
 
+#ifndef SERVER_BUILD
     [[nodiscard]] sf::Vector2u getWindowSize() const {
         return window->getSize();
     }
+#else
+    static sf::Vector2u getWindowSize() {
+        return {CONFIG.window.width, CONFIG.window.height};
+    }
+#endif
 
     [[nodiscard]] const std::string& getSceneName() const {
         return scene_name;
@@ -167,8 +182,12 @@ public:
 protected:
     std::vector<std::shared_ptr<GameObject>> game_objects;
     std::unordered_map<unsigned int, std::shared_ptr<GameObject>> game_objects_map;
+
+#ifndef SERVER_BUILD
     sf::RenderWindow* window{};
     std::unique_ptr<Camera> camera;
+#endif
+
     std::string scene_name;
     SceneManager* scene_manager{};
     bool is_init = false;

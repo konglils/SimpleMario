@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#ifndef SERVER_BUILD
 #include "GameObject.h"
 #include "ModelManager.h"
 
@@ -58,3 +58,4 @@ protected:
     float sign = 1.0f;
     sf::Vector3f position;
 };
+#endif

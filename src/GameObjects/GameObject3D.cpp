@@ -1,7 +1,7 @@
 //
 // Created by MINEC on 2026/5/8.
 //
-
+#ifndef SERVER_BUILD
 #include "GameObject3D.h"
 #include "SceneContext.h"
 #include <cmath>
@@ -74,3 +74,4 @@ sf::Vector3f GameObject3D::rotateYZ(sf::Vector3f pos, const float angle) {
     pos.z = y * s + pos.z * c;
     return pos;
 }
+#endif

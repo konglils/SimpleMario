@@ -1,7 +1,7 @@
 //
 // Created by MINEC on 2026/5/8.
 //
-
+#ifndef SERVER_BUILD
 #include "Circle.h"
 #include "CameraComponent.h"
 #include "EventBus.h"
@@ -79,3 +79,4 @@ bool Circle::needGravity() {
     collision->setCollisionPosition(collision->getCollisionPosition() - dy);
     return true;
 }
+#endif

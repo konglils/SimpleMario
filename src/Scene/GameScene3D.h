@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#ifndef SERVER_BUILD
 #include "Scene.h"
 #include "Cube3D.h"
 #include "Cube3DWithController.h"
@@ -39,3 +39,4 @@ public:
         window->setSize(sf::Vector2u(CONFIG.window.width, CONFIG.window.height));
     }
 };
+#endif

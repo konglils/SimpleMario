@@ -29,7 +29,7 @@
     "network": {
         "serverIp": "127.0.0.1",
         "port": 6666,
-        "tickRate": 50,
+        "tickRate": 0,
         "timeout": 5.0
     },
     "game": {

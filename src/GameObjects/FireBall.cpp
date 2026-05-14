@@ -155,3 +155,7 @@ void FireBall::serialize(sf::Packet& packet, const NetworkMsg type) {
 
 void FireBall::deserialize(sf::Packet& packet) {
 }
+
+unsigned int FireBall::getOwnerId() const {
+    return this->owner_id;
+}

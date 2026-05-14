@@ -1,0 +1,29 @@
+//
+// Created by MINEC on 2026/5/14.
+//
+
+#pragma once
+#include "Component.h"
+#include "Timer.h"
+
+class HealthBar : public Component {
+public:
+    HealthBar();
+
+    void update(const sf::Time& deltaTime) override;
+
+#ifndef SERVER_BUILD
+    void render(sf::RenderWindow* window) override;
+#endif
+
+    void takeDamage(int damage);
+
+    bool isDead() const;
+
+private:
+    bool dead = false;
+    bool invulnerable = false;
+    int health = 3;
+    int max_health = 3;
+    Timer invulnerable_timer;
+};

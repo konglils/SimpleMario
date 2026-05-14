@@ -112,7 +112,7 @@ public:
 
     std::shared_ptr<GameObject> findGameObjectById(const unsigned int id) {
         if (!game_objects_map.contains(id)) {
-            LOG_ERROR_FMT("GameObject with ID {} are not found", id);
+            LOG_ERROR_FMT("GameObject with ID {} are not found in game_objects_map", id);
             return nullptr;
         }
         return game_objects_map[id];
@@ -120,14 +120,15 @@ public:
 
     void removeObjectById(const unsigned int id) {
         if (!game_objects_map.contains(id)) {
-            LOG_ERROR_FMT("GameObject with ID {} are not found", id);
+            LOG_ERROR_FMT("GameObject with ID {} are not found in game_objects_map", id);
             return;
         }
         game_objects_map.erase(id);
+        LOG_DEBUG_FMT("Removing GameObject with id {} in game_objects_map", id);
         for (auto it = game_objects.begin(); it != game_objects.end(); ++it) {
             if ((*it)->getId() == id) {
                 game_objects.erase(it);
-                LOG_DEBUG_FMT("Removing GameObject with id {}", id);
+                LOG_DEBUG_FMT("Removing GameObject with id {} in game_objects", id);
                 break;
             }
         }

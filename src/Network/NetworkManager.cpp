@@ -75,35 +75,45 @@ void NetworkManager::handleEvent(const sf::Event& event) {
     }
     if (network_type == NetworkType::Client) {
         sf::Packet packet;
-        packet << NetworkMsg::ClientInput;
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::W) {
+                packet << NetworkMsg::ClientInput << NetworkMsg::ClientInput;
                 packet << InputType::Jump;
                 clientSocket.send(packet);
             }
             else if (event.key.code == sf::Keyboard::A) {
+                packet << NetworkMsg::ClientInput << NetworkMsg::ClientInput;
                 packet << InputType::RunLeft;
                 clientSocket.send(packet);
             }
             else if (event.key.code == sf::Keyboard::D) {
+                packet << NetworkMsg::ClientInput << NetworkMsg::ClientInput;
                 packet << InputType::RunRight;
                 clientSocket.send(packet);
             }
             else if (event.key.code == sf::Keyboard::J) {
+                packet << NetworkMsg::ClientInput << NetworkMsg::ClientInput;
                 packet << InputType::Shoot;
+                clientSocket.send(packet);
+            }
+            else if (event.key.code == sf::Keyboard::R) {
+                packet << NetworkMsg::ClientRespawn;
                 clientSocket.send(packet);
             }
         }
         else if (event.type == sf::Event::KeyReleased) {
             if (event.key.code == sf::Keyboard::A) {
+                packet << NetworkMsg::ClientInput << NetworkMsg::ClientInput;
                 packet << InputType::StopRunLeft;
                 clientSocket.send(packet);
             }
             else if (event.key.code == sf::Keyboard::D) {
+                packet << NetworkMsg::ClientInput << NetworkMsg::ClientInput;
                 packet << InputType::StopRunRight;
                 clientSocket.send(packet);
             }
             else if (event.key.code == sf::Keyboard::W) {
+                packet << NetworkMsg::ClientInput << NetworkMsg::ClientInput;
                 packet << InputType::JumpRelease;
                 clientSocket.send(packet);
             }
@@ -125,34 +135,48 @@ void NetworkManager::receiveNewConnection() {
                 it = game_objects.erase(it);
             }
         }
-        // 创建新加入的玩家
-        const auto current_scene = SceneContext::getInstance().getSceneManager()->getCurrentScene();
-        const auto newPlayer = current_scene->spawnEntity();
-        players[newClient.get()] = std::dynamic_pointer_cast<ISerializable>(newPlayer);
 
-        sf::Packet packet;
-        // 发送新玩家信息给所有玩家
-        if (!clients.empty()) {
-            players[newClient.get()].lock()->serialize(packet, NetworkMsg::SpawnObject);
+        createNewPlayer(newClient);
 
-            for (const auto& client : clients) {
-                client->send(packet);
-            }
-        }
-
-        // 发送新玩家信息给新玩家自己
-        packet.clear();
-        players[newClient.get()].lock()->serialize(packet, NetworkMsg::SpawnPlayer);
-
-        newClient->send(packet);
-
-        clients.emplace_back(newClient);
 #ifndef SERVER_BUILD
         LOG_INFO_FMT("New client connected! Total number of players: {}", clients.size() + 1u);
 #else
         LOG_INFO_FMT("New client connected! Total number of players: {}", clients.size());
 #endif
     }
+}
+
+void NetworkManager::createNewPlayer(const std::shared_ptr<sf::TcpSocket> newClient) {
+    // 创建新加入的玩家
+    const auto current_scene = SceneContext::getInstance().getSceneManager()->getCurrentScene();
+    // 注意，这里的spawnEntity方法会广播创建玩家，所以下面那一段可以注释了。
+    // 但是有可能 client 已经在 clients vector 里导致重复生成，所以先删了。
+    // 好蠢的方法，但是先写完没 bug 再说 ಥ_ಥ
+    for (auto it = clients.begin(); it != clients.end(); ++it) {
+        if (*it == newClient) {
+            clients.erase(it);
+            break;
+        }
+    }
+    const auto newPlayer = current_scene->spawnEntity();
+    players[newClient.get()] = std::dynamic_pointer_cast<ISerializable>(newPlayer);
+
+    sf::Packet packet;
+    // 发送新玩家信息给所有玩家
+    // if (!clients.empty()) {
+    //     players[newClient.get()].lock()->serialize(packet, NetworkMsg::SpawnObject);
+    //
+    //     for (const auto& client : clients) {
+    //         if (client != newClient) client->send(packet);
+    //     }
+    // }
+
+    // 发送新玩家信息给新玩家自己
+    players[newClient.get()].lock()->serialize(packet, NetworkMsg::SpawnPlayer);
+
+    newClient->send(packet);
+
+    clients.emplace_back(newClient);
 }
 
 void NetworkManager::serverUpdate(const sf::Time& deltaTime) {
@@ -162,32 +186,44 @@ void NetworkManager::serverUpdate(const sf::Time& deltaTime) {
     std::unordered_map<unsigned int, bool> removeIdsMap; // 存储需要删除的玩家id
     for (auto it = clients.begin(); it != clients.end();) {
         const auto& client = *it;
+
+        const auto player = players[client.get()].lock();
+        // 如果玩家死亡会导致这个弱指针失效
+        if (!player) {
+            LOG_TRACE("client player died and weak ptr is invalid");
+            players.erase(client.get());
+        }
+
         sf::Packet packet;
         sf::Socket::Status status = client->receive(packet);
         // 客户端断开连接处理
         if (status == sf::Socket::Error || status == sf::Socket::Disconnected) {
-            if (const auto player = players[client.get()].lock()) {
+            if (player) {
                 const unsigned int id = player->getNetworkId();
                 removeIdsMap[id] = true;
                 players.erase(client.get());
                 player->disconnect();
                 it = clients.erase(it);
+                LOG_DEBUG("client removed in clients vector");
                 continue;
             }
-            // 失效了也需要移除
-            players.erase(client.get());
+            // 失效了也需要移除，因为client断开了
             it = clients.erase(it);
-            LOG_ERROR("client game object is unexpectedly released");
+            LOG_INFO("client game object is released");
             continue;
         }
         // 处理玩家的输入操作
         while (status == sf::Socket::Done) {
-            const auto player = players[client.get()].lock();
-            if (!player) {
-                LOG_ERROR("client game object is unexpectedly released");
-                break;
+            NetworkMsg msg_type;
+            packet >> msg_type;
+            if (msg_type == NetworkMsg::ClientRespawn) {
+                LOG_INFO("client request to respawn");
+                createNewPlayer(client);
+            } else if (msg_type == NetworkMsg::ClientInput) {
+                if (player) {
+                    player->deserialize(packet);
+                }
             }
-            player->deserialize(packet);
             status = client->receive(packet);
         }
         ++it;
@@ -247,7 +283,7 @@ void NetworkManager::clientUpdate(const sf::Time& deltaTime) {
                 SceneContext::getInstance().getSceneManager()->
                                             getCurrentScene()->findGameObjectById(id));
             if (!obj) {
-                LOG_ERROR_FMT("Objects with ID {} are not found", id);
+                LOG_ERROR_FMT("Object with ID {} are not found", id);
                 packet.clear();
                 continue;
             }
@@ -275,10 +311,15 @@ void NetworkManager::addGameObject(const std::shared_ptr<GameObject>& obj) {
     if (this->network_type == NetworkType::Server) {
         // 向所有客户端广播新对象
         for (const auto& client : clients) {
-            if (obj->getClassName() == "Mario") continue;
             sf::Packet spawn_packet;
             serializable_obj->serialize(spawn_packet, NetworkMsg::SpawnObject);
             client->send(spawn_packet);
         }
+    }
+}
+
+void NetworkManager::broadcast(sf::Packet& packet) const {
+    for (const auto client : clients) {
+        client->send(packet);
     }
 }

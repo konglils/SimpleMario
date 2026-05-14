@@ -30,7 +30,7 @@ public:
                 if (!a->isActive() || !b->isActive()) continue;
 
                 const auto a_c = a->getComponent<Collision>();
-                if (!a_c) continue;
+                if (!a_c || !a_c->getActive()) continue;
                 // float maxX = std::max(a->posX + a->width, b->posX + b->width);
                 // float minX = std::min(a->posX, b->posX);
                 // float maxY = std::max(a->posY + a->height, b->posY + b->height);
@@ -38,7 +38,7 @@ public:
 
                 // std::cout << a->height + b->height << ' ' << maxY - minY << std::endl;
 
-                if (auto b_c = b->getComponent<Collision>(); a_c->checkCollision(*b_c)) {
+                if (auto b_c = b->getComponent<Collision>(); b_c->getActive() && a_c->checkCollision(*b_c)) {
                     const sf::Vector2f a_speed = a->getSpeed();
                     const sf::Vector2f b_speed = b->getSpeed();
                     const sf::Vector2f ac_position = a_c->getCollisionPosition();

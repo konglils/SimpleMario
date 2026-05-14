@@ -52,7 +52,7 @@ public:
         return is_destroy;
     }
 
-    void destroy() {
+    virtual void destroy() {
         is_destroy = true;
         active = false;
     }

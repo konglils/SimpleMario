@@ -42,7 +42,7 @@ public:
     struct NetworkConfig {
         std::string serverIp = "127.0.0.1";
         int port = 6666;
-        int tickRate = 50;
+        int tickRate = 0;
         float timeout = 5.0f;
     } network{};
 

@@ -11,6 +11,8 @@
 #include "MarioController.h"
 #include "MarioIdleState.h"
 #include "CollisionSystem.h"
+#include "HealthBar.h"
+#include "MarioDeadState.h"
 
 Mario::Mario(const float x, const float y, const bool isPlayer) {
     this->position = sf::Vector2f(x, y);
@@ -21,6 +23,7 @@ Mario::Mario(const float x, const float y, const bool isPlayer) {
     this->addComponent<Collision, BoxCollision, true>();
     // this->addComponent<CollisionHandle, BoxCollisionHandle>();
     this->addComponent<GravityComponent>();
+    this->addComponent<HealthBar>();
 #ifndef SERVER_BUILD
     if (isPlayer) this->addComponent<MarioCameraComponent>();
 #endif
@@ -28,6 +31,7 @@ Mario::Mario(const float x, const float y, const bool isPlayer) {
     stateMachine->addState<MarioRunState>();
     stateMachine->addState<MarioIdleState>();
     stateMachine->addState<MarioJumpState>();
+    stateMachine->addState<MarioDeadState>();
     stateMachine->setState("MarioIdleState");
 
     this->addComponent<MoveComponent>();
@@ -83,11 +87,13 @@ void Mario::update(sf::Time deltaTime) {
     }
     GameObject::update(deltaTime);
     if (this->getPosition().y > static_cast<float>(SceneContext::getInstance().getWindowHeight())) {
+        if (this->getComponent<HealthBar>()->isDead()) return;
         this->getComponent<MoveComponent>()->setPositionY(-this->getSize().y);
     }
 }
 
 bool Mario::needGravity() {
+    if (this->getComponent<HealthBar>()->isDead()) return false;
     auto collision = this->getComponent<Collision>();
     sf::Vector2f dy = sf::Vector2f(0.f, 1.f);
     collision->setCollisionPosition(collision->getCollisionPosition() + dy);
@@ -115,6 +121,19 @@ void Mario::handleCollision(const CollisionEvent& event) {
     // std::cout << this_->getTag() << ' ' << other->getTag() << std::endl;
 
     if (!this_->getMoveAble()) return;
+
+    if (other->getClassName() == "FireBall") {
+        if (const auto fireball = std::dynamic_pointer_cast<FireBall>(other);
+            fireball && fireball->getOwnerId() != this_->getId()) {
+            const auto& health_bar = getComponent<HealthBar>();
+            health_bar->takeDamage(1);
+            if (health_bar->isDead()) {
+                this->getComponent<StateMachine>()->setState("MarioDeadState");
+                return;
+            }
+        }
+    }
+
     std::shared_ptr<MoveComponent> moveComponent = this_->getComponent<MoveComponent>();
     if (!moveComponent) return;
 
@@ -162,6 +181,13 @@ void Mario::handleCollision(const CollisionEvent& event) {
         else {
             moveComponent->moveCollisionYTo(event.b_position.y + other->getSize().y);
         }
+    }
+}
+
+void Mario::destroy() {
+    NetworkGameObject::destroy();
+    if (this->isPlayer) {
+        EventBus::getInstance().publish("PlayerDied", true);
     }
 }
 

@@ -4,21 +4,22 @@
 
 #pragma once
 #include "Box.h"
-#include "BoxGameObject.h"
 #include "Brick.h"
-#include "Button.h"
 #include "Ground.h"
 #include "Scene.h"
 #include "CollisionSystem.h"
 #include "Mario.h"
 #include "NetworkManager.h"
-#include "SimpleNetwork.h"
 
 
 class SuperMarioScene : public Scene {
 public:
+#ifndef SERVER_BUILD
     explicit SuperMarioScene(sf::RenderWindow* _window) : Scene(_window, "SuperMarioScene") {
     }
+#else
+    explicit SuperMarioScene() : Scene("SuperMarioScene") { }
+#endif
 
     ~SuperMarioScene() override = default;
 
@@ -27,16 +28,29 @@ public:
         if (is_init) return;
         is_init = true;
         collisionSystem = std::make_unique<CollisionSystem>();
-
+#ifndef SERVER_BUILD
         bg.setTexture(AssetManager::getInstance().getTexture("level_1"));
         const float bg_scale = static_cast<float>(window->getSize().y) / bg.getLocalBounds().height;
         bg.setScale(bg_scale, bg_scale);
+
+        EventBus::getInstance().subscribe<const bool>(
+            "PlayerDied",
+            [this](const bool flag) -> void {
+                this->show_death_screen = flag;
+            }
+        );
+#endif
         initStaticObjects();
+
+#ifdef SERVER_BUILD
+        startServer();
+#endif
     }
 
     std::shared_ptr<GameObject> spawnEntity() override {
         auto obj = std::make_shared<Mario>(100.f, 100.f, false);
         this->addObjectWithNetwork(obj);
+        LOG_DEBUG_FMT("Create mario with id:{}", obj->getId());
         return obj;
     }
 
@@ -106,15 +120,22 @@ public:
     void initDynamicObjects() {
         if (is_initDynamicObjects) return;
         is_initDynamicObjects = true;
+#ifndef SERVER_BUILD
         std::shared_ptr<Mario> mario = std::make_shared<Mario>(100.f, 100.f);
         this->addObjectWithNetwork(mario);
         LOG_DEBUG("Create mario");
+#endif
     }
 
+#ifndef SERVER_BUILD
     void render(sf::RenderWindow* _window) override {
         _window->draw(bg);
         Scene::render(_window);
+        if (show_death_screen) {
+            showDeathScreen(_window);
+        }
     }
+#endif
 
     void update(sf::Time deltaTime) override {
         Scene::update(deltaTime);
@@ -142,7 +163,7 @@ public:
         addObjectWithMap(obj);
         simple_network.addGameObject(obj);
     }
-
+#ifndef SERVER_BUILD
     void handleEvent(sf::Event& event) override {
         simple_network.handleEvent(event);
         Scene::handleEvent(event);
@@ -152,10 +173,17 @@ public:
         } else if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Escape) {
                 SceneContext::getInstance().getSceneManager()->loadScene("MenuScene");
+            } else if (event.key.code == sf::Keyboard::R && show_death_screen) {
+                show_death_screen = false;
+                if (simple_network.getNetworkType() == NetworkManager::NetworkType::Server) {
+                    std::shared_ptr<Mario> mario = std::make_shared<Mario>(100.f, 100.f);
+                    this->addObjectWithNetwork(mario);
+                    LOG_DEBUG("Respawn mario");
+                }
             }
         }
     }
-
+#endif
     CollisionSystem* getCollisionSystem() const override {
         return collisionSystem.get();
     }
@@ -174,9 +202,56 @@ public:
         return simple_network.getNetworkType();
     }
 
+#ifndef SERVER_BUILD
+    static void showDeathScreen(sf::RenderWindow* _window) {
+        // TODO: 优化性能
+        sf::RectangleShape deathOverlay;
+        sf::Text deathText;
+        sf::Text deathHint;
+
+        deathOverlay.setFillColor(sf::Color(0, 0, 0, 180));
+        deathText.setFont(AssetManager::getInstance().getFont());
+        deathText.setString("YOU DIED");
+        deathText.setCharacterSize(64);
+        deathText.setFillColor(sf::Color::Red);
+        deathText.setStyle(sf::Text::Bold);
+        deathHint.setFont(AssetManager::getInstance().getFont());
+        deathHint.setString("Press R to Respawn    Press Esc to Quit");
+        deathHint.setCharacterSize(24);
+        deathHint.setFillColor(sf::Color::White);
+
+
+        sf::View oldView = _window->getView();
+        sf::View screenView(sf::FloatRect(0, 0,
+            static_cast<float>(_window->getSize().x),
+            static_cast<float>(_window->getSize().y)));
+        _window->setView(screenView);
+
+        const float w = static_cast<float>(_window->getSize().x);
+        const float h = static_cast<float>(_window->getSize().y);
+        deathOverlay.setSize(sf::Vector2f(w, h));
+        _window->draw(deathOverlay);
+
+        deathText.setPosition(
+            w / 2.f - deathText.getGlobalBounds().width / 2.f,
+            h * 0.3f - deathText.getGlobalBounds().height / 2.f);
+        _window->draw(deathText);
+
+        deathHint.setPosition(
+            w / 2.f - deathHint.getGlobalBounds().width / 2.f,
+            h * 0.55f);
+        _window->draw(deathHint);
+
+        _window->setView(oldView);
+    }
+#endif
+
 private:
     std::unique_ptr<CollisionSystem> collisionSystem;
     NetworkManager simple_network;
+#ifndef SERVER_BUILD
     sf::Sprite bg;
+#endif
     bool is_initDynamicObjects = false;
+    bool show_death_screen = false;
 };

@@ -22,6 +22,7 @@ public:
         listeners[event].push_back([callback](std::any data) {
             callback(std::any_cast<T>(data));
         });
+        LOG_TRACE_FMT("{} subscribed", event);
     }
 
     template <typename T>
@@ -40,6 +41,7 @@ public:
             LOG_WARN_FMT("{} not found", event_name);
             return;
         }
+        LOG_TRACE_FMT("{} removed", event_name);
         listeners.erase(event_name);
     }
 

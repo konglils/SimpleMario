@@ -30,7 +30,8 @@ enum class NetworkMsg : uint8_t {
     UpdateObject = 2,
     RemoveObject = 3,
     ClientInput = 4,
-    SpawnFireBall = 5
+    SpawnFireBall = 5,
+    ClientRespawn = 6
 };
 
 enum class ObjectType : uint8_t {

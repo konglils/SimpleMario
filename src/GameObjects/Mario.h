@@ -39,6 +39,8 @@ public:
         return isPlayer;
     }
 
+    void destroy() override;
+
     sf::Vector2f getCenter() override {
         return this->position + getComponent<Collision>()->getOffset() + this->size * 0.5f;
     }

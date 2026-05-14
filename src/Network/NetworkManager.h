@@ -42,6 +42,10 @@ public:
 
     void addGameObject(const std::shared_ptr<GameObject>& obj);
 
+    void broadcast(sf::Packet& packet) const;
+
+    void createNewPlayer(const std::shared_ptr<sf::TcpSocket> newClient);
+
 private:
     NetworkType network_type = NetworkType::None;
     unsigned int port = CONFIG.network.port;

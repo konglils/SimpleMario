@@ -28,6 +28,8 @@ public:
 
     void deserialize(sf::Packet& packet) override;
 
+    unsigned int getOwnerId() const;
+
 private:
     bool is_exploded = false;
 #ifndef SERVER_BUILD

@@ -12,10 +12,8 @@
 #include "GameScene.h"
 #include "GameScene3D.h"
 #include "MenuScene.h"
-#include "SuperMarioScene.h"
-#else
-#include "SuperMarioServerScene.h"
 #endif
+#include "SuperMarioScene.h"
 
 class SuperMarioServerScene;
 
@@ -60,7 +58,7 @@ public:
         scene_manager->addScene<MenuScene>(window);
         scene_manager->loadScene("MenuScene");
 #else
-        scene_manager->addScene<SuperMarioServerScene>();
+        scene_manager->addScene<SuperMarioScene>();
         scene_manager->loadScene("SuperMarioScene");
 #endif
     }

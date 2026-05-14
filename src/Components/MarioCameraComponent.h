@@ -15,7 +15,7 @@ public:
     void update(const sf::Time& deltaTime) override {
         if (Camera* camera = SceneContext::getInstance().getCamera()) {
             // camera->setPosition(owner->getPosition().x - 400, owner->getPosition().y - 600);
-            if (owner->getPosition().x > 200) camera->setPositionX(owner->getPosition().x - 200);
+            if (owner->getPosition().x > 400) camera->setPositionX(owner->getPosition().x - 400);
         }
     }
 };

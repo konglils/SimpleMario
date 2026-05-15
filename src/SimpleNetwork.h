@@ -232,7 +232,7 @@ public:
 
         // 向客户端同步数据
         past_time += deltaTime.asMilliseconds();
-        if (past_time < CONFIG.network.tickRate) return;
+        if (past_time < 1000 / CONFIG.network.tickRate) return;
         past_time = 0;
         for (const auto& client : clients) {
             for (const auto& obj : game_objects) {
@@ -358,5 +358,5 @@ private:
     std::unordered_map<sf::TcpSocket*, std::shared_ptr<GameObject>> players;
     // 需要同步的游戏对象
     std::vector<std::shared_ptr<GameObject>> game_objects;
-    int past_time = 0;
+    int past_time = 0; // 毫秒
 };

@@ -42,7 +42,7 @@
    ```
 
 2. 配置SFML路径:
-   修改[CMakeLists.txt]()中的SFML_ROOT路径为你的SFML安装路径
+   默认使用系统 SFML，否则使用项目自带 SFML。
 
 3. 编译项目:
    ```bash
@@ -50,6 +50,12 @@
    cd build
    cmake ..
    make
+   ```
+
+4. 启动示例：
+   ```bash
+   cd build/bin
+   ./GameEngine
    ```
 
 ## 运行示例

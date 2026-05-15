@@ -244,7 +244,7 @@ void NetworkManager::serverUpdate(const sf::Time& deltaTime) {
 
     // 向客户端同步数据
     past_time += deltaTime.asMilliseconds();
-    if (past_time < CONFIG.network.tickRate) return;
+    if (past_time < 1000 / CONFIG.network.tickRate) return;
     past_time = 0;
     LOG_TRACE("Sending update packets to clients");
     for (const auto& client : clients) {

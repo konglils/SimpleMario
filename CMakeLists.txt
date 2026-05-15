@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-set(WIN_STATIC_LINK OFF)
+set(WIN_STATIC_LINK ON)
 set(BUILD_FOR_SERVER OFF)
 
 if (BUILD_FOR_SERVER)
@@ -13,16 +13,14 @@ else ()
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 endif ()
 
-# 设置 SFML 路径
 if (WIN32)
     set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
+    if (WIN_STATIC_LINK)
+        add_definitions(-DSFML_STATIC)
+        set(CMAKE_EXE_LINKER_FLAGS "-static")
+    endif ()
 else ()
     set(SFML_ROOT "./lib/SFML-2.6.1-linux")
-endif ()
-
-if (WIN_STATIC_LINK)
-    add_definitions(-DSFML_STATIC)
-    set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif ()
 
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)

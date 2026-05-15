@@ -238,8 +238,9 @@ void Mario::deserialize(sf::Packet& packet) {
         InputType type;
         packet >> type;
         if (type == InputType::Jump) {
-            marioController->jump();
             const auto& state_machine = this->getComponent<StateMachine>();
+            if (state_machine->getCurrentStateName() == "MarioDeadState") return;
+            marioController->jump();
             state_machine->setState("MarioJumpState");
             std::dynamic_pointer_cast<MarioJumpState>(state_machine->getCurrentState())->setJumpTimer();
         } else if (type == InputType::RunLeft) {

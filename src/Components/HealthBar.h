@@ -18,7 +18,7 @@ public:
 
     void takeDamage(int damage);
 
-    bool isDead() const;
+    [[nodiscard]] bool isDead() const;
 
 private:
     bool dead = false;

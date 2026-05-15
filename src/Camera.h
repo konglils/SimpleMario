@@ -44,6 +44,10 @@ public:
         updateView();
     }
 
+    sf::Vector2f getPosition() const {
+        return {this->floatRect.left, this->floatRect.top};
+    }
+
     void setPositionX(const float x) {
         this->floatRect.left = x;
         updateView();

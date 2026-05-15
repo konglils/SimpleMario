@@ -49,6 +49,8 @@ public:
     }
 
     void handleEvent(const sf::Event& event) override {
+        // 防止错误更新
+        if (owner->getComponent<StateMachine>()->getCurrentStateName() != this->getName()) return;
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::A) {
                 setIsLeft(true);

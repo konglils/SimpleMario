@@ -23,6 +23,8 @@ public:
 
 
     void update(const sf::Time& deltaTime) override {
+        // 防止错误更新
+        if (owner->getComponent<StateMachine>()->getCurrentStateName() != this->getName()) return;
         if (owner->getSpeed().x == 0.f) {
             owner->getComponent<StateMachine>()->setState("MarioIdleState");
             return;

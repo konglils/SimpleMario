@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-set(WIN_STATIC_LINK OFF)
+set(WIN_STATIC_LINK ON)
 set(BUILD_FOR_SERVER OFF)
 
 if (BUILD_FOR_SERVER)
@@ -30,13 +30,7 @@ else ()
     find_package(SFML 2.6 COMPONENTS system network graphics window audio REQUIRED)
 endif ()
 
-if (WIN32)
-    set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
-else ()
-    set(SFML_ROOT "./lib/SFML-2.6.1-linux")
-endif ()
-
-if (WIN_STATIC_LINK)
+if (WIN32 AND WIN_STATIC_LINK)
     add_definitions(-DSFML_STATIC)
     set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif ()

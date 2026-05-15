@@ -319,7 +319,7 @@ void NetworkManager::addGameObject(const std::shared_ptr<GameObject>& obj) {
 }
 
 void NetworkManager::broadcast(sf::Packet& packet) const {
-    for (const auto client : clients) {
+    for (const auto& client : clients) {
         client->send(packet);
     }
 }

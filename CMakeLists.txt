@@ -14,6 +14,22 @@ else ()
 endif ()
 
 # 设置 SFML 路径
+# 优先尝试系统提供的 SFML
+find_package(SFML 2.6 COMPONENTS system network graphics window audio QUIET)
+if (SFML_FOUND)
+    message(STATUS "Using system SFML: ${SFML_DIR}")
+else ()
+    # 如果系统没有提供 SFML，使用项目提供的版本
+    message(STATUS "System SFML not found, using bundled version")
+    if (WIN32)
+        set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
+    else ()
+        set(SFML_ROOT "./lib/SFML-2.6.1-linux")
+    endif ()
+    set(SFML_DIR "${SFML_ROOT}/lib/cmake/SFML")
+    find_package(SFML 2.6 COMPONENTS system network graphics window audio REQUIRED)
+endif ()
+
 if (WIN32)
     set(SFML_ROOT "./lib/SFML-2.6.1-gcc")
 else ()

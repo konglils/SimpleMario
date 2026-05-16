@@ -17,6 +17,16 @@
 
 class SuperMarioServerScene;
 
+static std::filesystem::path getExeDir() {
+#ifdef _WIN32
+    wchar_t path[MAX_PATH];
+    GetModuleFileNameW(nullptr, path, MAX_PATH);
+    return std::filesystem::canonical(path).parent_path();
+#else
+    return std::filesystem::canonical("/proc/self/exe").parent_path();
+#endif
+}
+
 class GameEngine {
 public:
     GameEngine() = default;
@@ -27,6 +37,9 @@ public:
     }
 
     void init() {
+        // 更改工作目录为主程序所在目录
+        std::filesystem::current_path(getExeDir());
+
         Logger::getInstance().setLogFile("log.txt");
         Logger::getInstance().setLogLevel(LogLevel::Debug); // 只显示 Debug 及以上级别
 #ifndef SERVER_BUILD
@@ -106,4 +119,3 @@ private:
     std::shared_ptr<SceneManager> scene_manager;
     sf::RenderWindow* window{};
 };
-

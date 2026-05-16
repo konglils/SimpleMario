@@ -26,6 +26,7 @@ Mario::Mario(const float x, const float y, const bool isPlayer) {
     this->addComponent<HealthBar>();
 #ifndef SERVER_BUILD
     if (isPlayer) this->addComponent<MarioCameraComponent>();
+    shoot_sound.setBuffer(AssetManager::getInstance().getSoundBuffer("fireball"));
 #endif
     const auto stateMachine = this->addComponent<StateMachine>();
     stateMachine->addState<MarioRunState>();
@@ -65,6 +66,10 @@ void Mario::shoot() {
     if (!could_shoot) return;
     could_shoot = false;
     shoot_timer.start(CONFIG.game.shootDelay);
+#ifndef SERVER_BUILD
+    shoot_sound.stop();
+    shoot_sound.play();
+#endif
     const auto current_scene = SceneContext::getInstance().getSceneManager()->getCurrentScene();
     // TODO: 先这样写，到时候看怎么改好
     if (current_scene->getNetworkType() == NetworkManager::NetworkType::Client) return;

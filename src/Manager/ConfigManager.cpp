@@ -78,6 +78,7 @@ void ConfigManager::parseGame(const json& j) {
     game.defaultBlockSize = j.value("defaultBlockSize", game.defaultBlockSize);
     game.shootDelay = j.value("shootDelay", game.shootDelay);
     game.fireballSpeedY = j.value("fireballSpeedY", game.fireballSpeedY);
+    game.fireBallTTL = j.value("fireBallTTL", game.fireBallTTL);
 }
 
 

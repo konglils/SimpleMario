@@ -41,9 +41,13 @@ public:
 
     void clientUpdate(const sf::Time& deltaTime);
 
-    void addGameObject(const std::shared_ptr<GameObject>& obj);
+    void addGameObjectAndSync(const std::shared_ptr<GameObject>& obj);
 
     void createNewPlayer(std::shared_ptr<TcpClient> newClient);
+
+    void respawnPlayer(const std::shared_ptr<TcpClient>& client);
+
+    void addGameObject(const std::shared_ptr<GameObject>& obj);
 
 private:
     NetworkType network_type = NetworkType::None;

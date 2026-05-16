@@ -53,4 +53,7 @@ private:
     bool isPlayer = true;
     bool could_shoot = true;
     Timer shoot_timer;
+#ifndef SERVER_BUILD
+    sf::Sound shoot_sound;
+#endif
 };

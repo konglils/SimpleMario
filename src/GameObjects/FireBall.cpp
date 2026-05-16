@@ -28,6 +28,10 @@ FireBall::FireBall(const unsigned int owner_id, const float x, const float y, co
 
     this->addComponent<MoveComponent>()->setSpeed(sf::Vector2f(speed_x, CONFIG.game.fireballSpeedY));
 
+    // 设置为 10s 自动爆炸
+    ttl_timer.start(CONFIG.game.fireBallTTL);
+    ttl_timer.setCallback([this]() -> void { this->setExploded(); });
+
     this->tag = "fireball:" + std::to_string(this->id);
     className = "FireBall";
 }
@@ -67,6 +71,7 @@ void FireBall::update(sf::Time deltaTime) {
     else {
         animation.update(deltaTime);
     }
+    ttl_timer.update(deltaTime);
 }
 #else
 void FireBall::update(sf::Time deltaTime) {
@@ -74,6 +79,7 @@ void FireBall::update(sf::Time deltaTime) {
     if (is_exploded) {
         destroy();
     }
+    ttl_timer.update(deltaTime);
 }
 #endif
 

@@ -6,6 +6,7 @@
 #include "Animation.h"
 #include "Events.h"
 #include "NetworkGameObject.h"
+#include "Timer.h"
 
 
 class FireBall : public NetworkGameObject {
@@ -37,4 +38,5 @@ private:
     Animation explosionAnimation;
 #endif
     unsigned int owner_id;
+    Timer ttl_timer;
 };

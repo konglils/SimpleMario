@@ -49,12 +49,19 @@ public:
 
     std::shared_ptr<GameObject> spawnEntity() override {
         auto obj = std::make_shared<Mario>(100.f, 100.f, false);
+        this->addObjectWithMap(obj);
+        LOG_DEBUG_FMT("Create mario with id:{}", obj->getId());
+        return obj;
+    }
+
+    std::shared_ptr<GameObject> spawnEntityWithNetwork() override {
+        auto obj = std::make_shared<Mario>(100.f, 100.f, false);
         this->addObjectWithNetwork(obj);
         LOG_DEBUG_FMT("Create mario with id:{}", obj->getId());
         return obj;
     }
 
-    std::shared_ptr<GameObject> spawnEntity(sf::Packet& packet) override {
+    std::shared_ptr<GameObject> spawnEntityWithNetwork(sf::Packet& packet) override {
         unsigned int id;
         ObjectType obj_type;
         packet >> id >> obj_type;
@@ -161,7 +168,7 @@ public:
 
     void addObjectWithNetwork(const std::shared_ptr<GameObject>& obj) override {
         addObjectWithMap(obj);
-        simple_network.addGameObject(obj);
+        simple_network.addGameObjectAndSync(obj);
     }
 #ifndef SERVER_BUILD
     void handleEvent(sf::Event& event) override {

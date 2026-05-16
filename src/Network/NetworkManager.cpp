@@ -153,33 +153,39 @@ void NetworkManager::receiveNewConnection() {
 void NetworkManager::createNewPlayer(const std::shared_ptr<TcpClient> newClient) {
     // 创建新加入的玩家
     const auto current_scene = SceneContext::getInstance().getSceneManager()->getCurrentScene();
-    // 注意，这里的spawnEntity方法会广播创建玩家，所以下面那一段可以注释了。
-    // 但是有可能 client 已经在 clients vector 里导致重复生成，所以先删了。
-    // 好蠢的方法，但是先写完没 bug 再说 ಥ_ಥ
-    for (auto it = clients.begin(); it != clients.end(); ++it) {
-        if (*it == newClient) {
-            clients.erase(it);
-            break;
-        }
-    }
-    const auto newPlayer = current_scene->spawnEntity();
+    // spawnEntityWithNetwork 方法会广播生成新对象的消息给clients vector里的所有客户端
+    const auto newPlayer = current_scene->spawnEntityWithNetwork();
     players[newClient.get()] = std::dynamic_pointer_cast<ISerializable>(newPlayer);
 
     sf::Packet packet;
-    // 发送新玩家信息给所有玩家
-    // if (!clients.empty()) {
-    //     players[newClient.get()].lock()->serialize(packet, NetworkMsg::SpawnObject);
-    //
-    //     for (const auto& client : clients) {
-    //         if (client != newClient) client->send(packet);
-    //     }
-    // }
-
     // 发送新玩家信息给新玩家自己
     players[newClient.get()].lock()->serialize(packet, NetworkMsg::SpawnPlayer);
     newClient->append(packet);
 
     clients.emplace_back(newClient);
+}
+
+void NetworkManager::respawnPlayer(const std::shared_ptr<TcpClient>& client) {
+    // 创建重生玩家
+    const auto current_scene = SceneContext::getInstance().getSceneManager()->getCurrentScene();
+
+    const auto newPlayer = current_scene->spawnEntity();
+    players[client.get()] = std::dynamic_pointer_cast<ISerializable>(newPlayer);
+
+    // 发送玩家重生信息给其他客户端
+    sf::Packet packet;
+    players[client.get()].lock()->serialize(packet, NetworkMsg::SpawnObject);
+    for (const auto& _client : clients) {
+        if (_client == client) continue;
+        _client->append(packet);
+    }
+
+    packet.clear();
+    // 发送重生玩家信息给玩家自己
+    players[client.get()].lock()->serialize(packet, NetworkMsg::SpawnPlayer);
+    client->append(packet);
+
+    addGameObject(newPlayer);
 }
 
 void NetworkManager::serverUpdate(const sf::Time& deltaTime) {
@@ -221,7 +227,7 @@ void NetworkManager::serverUpdate(const sf::Time& deltaTime) {
             packet >> msg_type;
             if (msg_type == NetworkMsg::ClientRespawn) {
                 LOG_INFO("client request to respawn");
-                createNewPlayer(client);
+                respawnPlayer(client);
             } else if (msg_type == NetworkMsg::ClientInput) {
                 if (player) {
                     player->deserialize(packet);
@@ -274,9 +280,9 @@ void NetworkManager::clientUpdate(const sf::Time& deltaTime) {
         NetworkMsg type;
         while (packet >> type) {
             if (type == NetworkMsg::SpawnObject || type == NetworkMsg::SpawnPlayer) {
-                LOG_ERROR_FMT("Received packet, type: SpawnObject, IsPlayer: {}", type == NetworkMsg::SpawnPlayer);
+                LOG_INFO_FMT("Received packet, type: SpawnObject, IsPlayer: {}", type == NetworkMsg::SpawnPlayer);
                 players[&clientSocket] = std::dynamic_pointer_cast<ISerializable>(
-                    SceneContext::getInstance().getSceneManager()->getCurrentScene()->spawnEntity(packet));
+                    SceneContext::getInstance().getSceneManager()->getCurrentScene()->spawnEntityWithNetwork(packet));
             }
             else if (type == NetworkMsg::UpdateObject) {
                 LOG_TRACE("Received packet, type: UpdateObject");
@@ -302,14 +308,14 @@ void NetworkManager::clientUpdate(const sf::Time& deltaTime) {
             }
             else if (type == NetworkMsg::SpawnFireBall) {
                 LOG_TRACE("Received packet, type: SpawnFireBall");
-                SceneContext::getInstance().getSceneManager()->getCurrentScene()->spawnEntity(packet);
+                SceneContext::getInstance().getSceneManager()->getCurrentScene()->spawnEntityWithNetwork(packet);
             }
         }
         status = clientSocket.receive(packet);
     }
 }
 
-void NetworkManager::addGameObject(const std::shared_ptr<GameObject>& obj) {
+void NetworkManager::addGameObjectAndSync(const std::shared_ptr<GameObject>& obj) {
     const auto& serializable_obj = std::dynamic_pointer_cast<ISerializable>(obj);
     game_objects.emplace_back(serializable_obj);
     if (this->network_type == NetworkType::Server) {
@@ -320,4 +326,8 @@ void NetworkManager::addGameObject(const std::shared_ptr<GameObject>& obj) {
             client->append(spawn_packet);
         }
     }
+}
+
+void NetworkManager::addGameObject(const std::shared_ptr<GameObject>& obj) {
+    game_objects.emplace_back(std::dynamic_pointer_cast<ISerializable>(obj));
 }

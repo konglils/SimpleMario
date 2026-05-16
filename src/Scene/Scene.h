@@ -42,7 +42,11 @@ public:
         return nullptr;
     }
 
-    virtual std::shared_ptr<GameObject> spawnEntity(sf::Packet& packet) {
+    virtual std::shared_ptr<GameObject> spawnEntityWithNetwork() {
+        return nullptr;
+    }
+
+    virtual std::shared_ptr<GameObject> spawnEntityWithNetwork(sf::Packet& packet) {
         return nullptr;
     }
 

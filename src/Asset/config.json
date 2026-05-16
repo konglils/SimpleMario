@@ -39,6 +39,7 @@
         "fireballSpeedY": -400.0,
         "defaultBlockSize": 64.0,
         "shootDelay": 300,
+        "fireBallTTL": 10000,
         "debug": true
     }
 }

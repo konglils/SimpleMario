@@ -58,6 +58,7 @@ public:
                 setIsLeft(false);
             } else if (event.key.code == sf::Keyboard::W) {
 #ifndef SERVER_BUILD
+                jump_sound.stop();
                 jump_sound.play();
 #endif
                 owner->getComponent<StateMachine>()->setState("MarioJumpState");

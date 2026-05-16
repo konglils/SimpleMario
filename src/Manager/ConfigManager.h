@@ -54,6 +54,7 @@ public:
         float fireballSpeedY = -400.0f;
         float defaultBlockSize = 64.f;
         int shootDelay = 300;
+        int fireBallTTL = 10000;
         bool debug = true;
     } game{};
 

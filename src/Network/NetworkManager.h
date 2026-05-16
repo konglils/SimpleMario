@@ -11,6 +11,7 @@
 
 #include "ConfigManager.h"
 #include "GameObject.h"
+#include "TcpClient.h"
 
 class NetworkManager {
 public:
@@ -42,17 +43,15 @@ public:
 
     void addGameObject(const std::shared_ptr<GameObject>& obj);
 
-    void broadcast(sf::Packet& packet) const;
-
-    void createNewPlayer(const std::shared_ptr<sf::TcpSocket> newClient);
+    void createNewPlayer(std::shared_ptr<TcpClient> newClient);
 
 private:
     NetworkType network_type = NetworkType::None;
     unsigned int port = CONFIG.network.port;
-    sf::TcpSocket clientSocket;
+    TcpClient clientSocket;
     sf::TcpListener listener;
-    std::vector<std::shared_ptr<sf::TcpSocket>> clients;
-    std::unordered_map<sf::TcpSocket*, std::weak_ptr<ISerializable>> players;
+    std::vector<std::shared_ptr<TcpClient>> clients;
+    std::unordered_map<TcpClient*, std::weak_ptr<ISerializable>> players;
     // 需要同步的游戏对象
     std::vector<std::weak_ptr<ISerializable>> game_objects;
     int past_time = 0;

@@ -26,8 +26,6 @@ else ()
     else ()
         set(SFML_ROOT "./lib/SFML-2.6.1-linux")
     endif ()
-    set(SFML_DIR "${SFML_ROOT}/lib/cmake/SFML")
-    find_package(SFML 2.6 COMPONENTS system network graphics window audio REQUIRED)
 endif ()
 
 if (WIN32 AND WIN_STATIC_LINK)
